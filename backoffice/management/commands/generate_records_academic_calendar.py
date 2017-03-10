@@ -23,7 +23,7 @@ def create_academic_calendar_year(academic_year,start_date, end_date,event):
     return academic_calendar_year
 
 #encoding date : now > end_date
-def create_academic_calendar_encoding_event_before(academic_year):
+def create_academic_calendar_encoding_event_in_past(academic_year):
     encoding_event = 'Encodage de notes session'
     today = date.today()
     start_date=datetime.datetime(today.year, today.month, today.day-15)
@@ -40,7 +40,7 @@ def create_academic_calendar_encoding_event_in(academic_year):
     return  create_academic_calendar_year(academic_year,start_date, end_date,encoding_event)
 
     # encoding date : end_date < now
-def create_academic_calendar_encoding_event_after(academic_year):
+def create_academic_calendar_encoding_event_in_fiture(academic_year):
         encoding_event = 'Encodage de notes session'
         today = date.today()
         start_date = datetime.datetime(today.year, today.month, today.day + 1)
@@ -56,7 +56,7 @@ def create_academic_calendar_delibe_event_in(academic_year):
 
 
     # delibe date :  start_date <=now <= end_date
-def create_academic_calendar_delibe_event_after(academic_year):
+def create_academic_calendar_delibe_event_in_fiture(academic_year):
     encoding_event = 'Deliberation session'
     today = date.today()
     delibe_date = datetime.datetime(today.year, today.month, today.day+1)

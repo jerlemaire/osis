@@ -11,6 +11,9 @@ from attribution import models as mdl_attribution
 from faker import Faker
 from backoffice.management.commands import generate_records_academic_year
 from backoffice.management.commands import generate_records_academic_calendar
+from backoffice.management.commands import generate_records_offer
+from backoffice.management.commands import  generate_records_offer_year_calendar
+from backoffice.management.commands import generate_records_offer_year
 
 import datetime
 
@@ -22,19 +25,6 @@ def create_record(model_class, **kwargs):
     model_class.objects.create(**kwargs)
 
 
-
-
-def create_offer_year_calendar(offer_year, academic_calendar, start_date, end_date):
-    an_start_date = start_date if start_date !=None else academic_calendar.start_date
-    an_end_date = end_date if end_date !=None else academic_calendar.end_date
-
-
-    offer_year_calendar = mdl_base.offer_year_calendar.OfferYearCalendar.objects.create(offer_year=offer_year,
-                                              academic_calendar=academic_calendar,
-                                              start_date=an_start_date,
-                                              end_date=an_end_date
-                                              )
-    return offer_year_calendar
 
 def create_be_country():
     country = mdl_reference.country.Country.objects.create( name='Belgique',iso_code='BE',nationality='Belge',cref_code='04')
@@ -74,25 +64,6 @@ def create_campus(name,organisation):
     campus = mdl_base.campus.Campus.objects.create(name=name, organization=organisation)
     return campus
 
-
-def create_offer(title):
-    offer = mdl_base.offer.Offer.objects.create(title=title)
-    return offer
-
-def create_offer_year(offer,academic_year,structure_sector,structure_fac,structure_pgm,acronym,title,title_short,grade,
-                       recipient,location, postal_code,city, country,campus):
-    offer_year = mdl_base.offer_year.OfferYear.objects.create(offer=offer, academic_year=academic_year,
-                                                              entity_administration=structure_sector,
-                                                              entity_administration_fac=structure_fac,
-                                                              entity_management=structure_pgm,
-                                                              acronym=acronym,
-                                                              title=title,
-                                                              title_short=title_short,
-                                                              grade=grade, recipient=recipient,
-                                                              location=location,
-                                                              postal_code= postal_code,
-                                                              city=city, country=country,campus=campus)
-    return offer_year
 
 def create_learning_unit(acronym,title,start_year, end_year):
     learning_unit = mdl_base.learning_unit.LearningUnit.objects.create(acronym=acronym,title=title,start_year=start_year,end_year=end_year)
@@ -196,84 +167,61 @@ class Command(BaseCommand):
         acr_ch='CHIM'
         acr_biol = 'BIOL'
         acr_sc = 'SC'
-
-        academic_year_before = generate_records_academic_year.create_academic_year_before()
-        academic_year_after = generate_records_academic_year.create_academic_year_after()
-        academic_year_actual = generate_records_academic_year.create_academic_year_actual()
-        academic_calendar_score_encoding_sess_before = generate_records_academic_calendar.create_academic_calendar_encoding_event_before(academic_year)
-        academic_calendar_score_encoding_sess_in = generate_records_academic_calendar.create_academic_calendar_encoding_event_before(
-           academic_year_actual)
-        academic_calendar_score_encoding_sess_after = generate_records_academic_calendar.create_academic_calendar_encoding_event_before(
-           academic_year_actual)
-
-        academic_calendar_score_delibe_sess_in = generate_records_academic_calendar.create_academic_calendar_delibe_event_in(
-            academic_year_actual)
-        academic_calendar_score_delibe_sess_after = generate_records_academic_calendar.create_academic_calendar_delibe_event_after(
-            academic_year_actual)
-
-
-        academic_calendar_score_encoding_sess_1 = None
-        academic_calendar_score_encoding_sess_2 = None
-        academic_calendar_score_encoding_sess_3 = None
-
-        academic_calendar_delibe_sess_1 = None
-        academic_calendar_delibe_sess_2 = None
-        academic_calendar_delibe_sess_3 = None
-
-        country =  create_be_country()
+        country = create_be_country()
         organisation = create_organization()
-        organisation_adres =  create_organization_adress(organisation,localisation_lln,cp_lln,city,country)
-        structure_sector =create_sector('SST','Secteur des sciences et technologies',organisation,'SECTOR')
-        structure_fac = create_structure(acr_sc,'Faculté des sciences',structure_sector,organisation,'FACULTY')
-        structure_pgm_chim = create_structure(acr_ch, 'Ecole de chimie',structure_fac,organisation,'PROGRAM_COMMISION')
-        structure_pgm_biol = create_structure(acr_biol, 'Ecole de biologie', structure_fac, organisation,'PROGRAM_COMMISION')
+        organisation_adres = create_organization_adress(organisation, localisation_lln, cp_lln, city, country)
+        structure_sector = create_sector('SST', 'Secteur des sciences et technologies', organisation, 'SECTOR')
+        structure_fac = create_structure(acr_sc, 'Faculté des sciences', structure_sector, organisation, 'FACULTY')
+        structure_pgm_chim = create_structure(acr_ch, 'Ecole de chimie', structure_fac, organisation,
+                                              'PROGRAM_COMMISION')
+        structure_pgm_biol = create_structure(acr_biol, 'Ecole de biologie', structure_fac, organisation,
+                                              'PROGRAM_COMMISION')
         campus = create_campus(localisation_lln, organisation)
 
-        offer = create_offer(bac_sc)
-        offer_year_chim =create_offer_year(offer,academic_year_actual,structure_sector,structure_fac,structure_fac,'CHIM11BA','Première année de bachelier en sciences chimiques',
+        academic_year = generate_records_academic_year.create_academic_year_actual()
+        academic_calendar_score_encoding_sess_in = generate_records_academic_calendar.create_academic_calendar_encoding_event_in(
+            academic_year)
+
+        academic_calendar_score_delibe_sess_in = generate_records_academic_calendar.create_academic_calendar_delibe_event_in(
+            academic_year)
+
+        offer =  generate_records_offer.create_offer(bac_sc)
+        offer_year_chim =generate_records_offer_year.create_offer_year(offer,academic_year,structure_sector,structure_fac,structure_fac,'CHIM11BA','Première année de bachelier en sciences chimiques',
                                       'I Ba en scs chimiques','Bachelier',recipient_sc,adres_sc,cp_lln,localisation_lln,country,campus)
-        offer_year_biol = create_offer_year(offer, academic_year_actual, structure_sector, structure_fac, structure_fac,'BIOL11BA', 'Première année de bachelier en sciences biologiques',
-                                       'I Ba en scs biologiques', 'Bachelier',recipient_sc,adres_sc ,cp_lln,localisation_lln,country,campus)
 
-        start_date=None
-        end_date=None
-        offer_year_calendar_chim_score_encoding_sess_1 = create_offer_year_calendar(offer_year_chim, academic_calendar_score_encoding_sess_1,start_date, end_date)
-        offer_year_calendar_chim_score_encoding_sess_2 = create_offer_year_calendar(offer_year_chim, academic_calendar_score_encoding_sess_2,start_date, end_date)
-        offer_year_calendar_chim_score_encoding_sess_3 = create_offer_year_calendar(offer_year_chim, academic_calendar_score_encoding_sess_3,start_date, end_date)
+        offer_year_calendar_chim_score_encoding_sess_past = generate_records_offer_year_calendar.create_offer_year_calendar_in_past(offer_year_chim, academic_calendar_score_encoding_sess_in)
+        offer_year_calendar_chim_score_encoding_sess_fiture = generate_records_offer_year_calendar.create_offer_year_calendar_in_fiture (
+            offer_year_chim, academic_calendar_score_encoding_sess_in)
+        offer_year_calendar_chim_score_encoding_sess_in = generate_records_offer_year_calendar.create_offer_year_calendar(offer_year_chim, academic_calendar_score_encoding_sess_in,None,None)
 
-        offer_year_calendar_chim_delibe_sess_1 = create_offer_year_calendar(offer_year_chim, academic_calendar_delibe_sess_1,datetime.datetime(2017, 2, 4),datetime.datetime(2017, 2, 4))
-        offer_year_calendar_chim_delibe_sess_2 = create_offer_year_calendar(offer_year_chim, academic_calendar_delibe_sess_2,datetime.datetime(2017, 6, 27),datetime.datetime(2017, 6, 27))
-        offer_year_calendar_chim_delibe_sess_3 = create_offer_year_calendar(offer_year_chim, academic_calendar_delibe_sess_3,datetime.datetime(2017, 9, 17),datetime.datetime(2017, 9, 17))
 
-        offer_year_calendar_biol_score_encoding_sess_1 = create_offer_year_calendar(offer_year_biol, academic_calendar_score_encoding_sess_1,start_date, end_date)
-        offer_year_calendar_biol_score_encoding_sess_2 = create_offer_year_calendar(offer_year_biol, academic_calendar_score_encoding_sess_2,start_date, end_date)
-        offer_year_calendar_biol_score_encoding_sess_3 = create_offer_year_calendar(offer_year_biol, academic_calendar_score_encoding_sess_3,start_date, end_date)
-
-        offer_year_calendar_biol_delibe_sess_1 = create_offer_year_calendar(offer_year_biol, academic_calendar_delibe_sess_1,datetime.datetime(2017, 2, 3),datetime.datetime(2017, 2, 3))
-        offer_year_calendar_biol_delibe_sess_1 = create_offer_year_calendar(offer_year_biol, academic_calendar_delibe_sess_2,datetime.datetime(2017, 6, 29),datetime.datetime(2017, 6, 29))
-        offer_year_calendar_biol_delibe_sess_1 = create_offer_year_calendar(offer_year_biol, academic_calendar_delibe_sess_3,datetime.datetime(2017, 9, 20),datetime.datetime(2017, 9, 20))
-
+        offer_year_calendar_chim_score_delibe_sess_past = generate_records_offer_year_calendar.create_offer_year_calendar_in_past(
+            offer_year_chim, academic_calendar_score_encoding_sess_in)
+        offer_year_calendar_chim_score_delibe_sess_fiture = generate_records_offer_year_calendar.create_offer_year_calendar_in_fiture(
+            offer_year_chim, academic_calendar_score_encoding_sess_in)
+        offer_year_calendar_chim_score_delibe_sess_in = generate_records_offer_year_calendar.create_offer_year_calendar(
+            offer_year_chim, academic_calendar_score_encoding_sess_in, None, None)
 
 
         credits = 10
 
         #decimal score not allowed
         learning_unit_chim = create_learning_unit(acronym_chim_learning,title_chim_learning,2004,end_learning)
-        learning_unit_year_chim = create_learning_unit_year(academic_year_actual,
+        learning_unit_year_chim = create_learning_unit_year(academic_year,
                                                                                learning_unit_chim,
                                                                                acronym_chim_learning, title_chim_learning,
                                                                                credits)
         credits = 20
         #decimal score allowed
         learning_unit_biol =  create_learning_unit(acronym_biol_learning,title_biol_learning,2007,end_learning)
-        learning_unit_year_biol = create_learning_unit_year(academic_year_actual,learning_unit_biol,acronym_biol_learning,title_biol_learning,credits)
+        learning_unit_year_biol = create_learning_unit_year(academic_year,learning_unit_biol,acronym_biol_learning,title_biol_learning,credits)
 
 
         #program manager
         user_pgm_manager = create_user('eni','evase','evase@gmail.com')
         person_pgm_manager = create_person(user_pgm_manager)
         program_manager_chim =create_program_manager(person_pgm_manager,offer_year_chim)
-        program_manager_biol = create_program_manager(person_pgm_manager, offer_year_biol)
+        #program_manager_biol = create_program_manager(person_pgm_manager, offer_year_biol)
 
         #prof leader
         user_chim_learning_unit_tutor_leader =create_user('eniLchim','evaseLchim','evaseChim@gmail.com')
@@ -299,14 +247,14 @@ class Command(BaseCommand):
         create_attribution(learning_unit_year_biol, tutor2_biol_learning_unit,False)
         
         #session_exam of courses
-        session_exam_1_learning_unit_chim = create_session_exam(1, learning_unit_year_chim, offer_year_calendar_chim_score_encoding_sess_1)
-        session_exam_2_learning_unit_chim = create_session_exam(2, learning_unit_year_chim, offer_year_calendar_chim_score_encoding_sess_2)
-        session_exam_3_learning_unit_chim = create_session_exam(3, learning_unit_year_chim, offer_year_calendar_chim_score_encoding_sess_3)
+        #session_exam_1_learning_unit_chim = create_session_exam(1, learning_unit_year_chim, offer_year_calendar_chim_score_encoding_sess_1)
+        #session_exam_2_learning_unit_chim = create_session_exam(2, learning_unit_year_chim, offer_year_calendar_chim_score_encoding_sess_2)
+        #session_exam_3_learning_unit_chim = create_session_exam(3, learning_unit_year_chim, offer_year_calendar_chim_score_encoding_sess_3)
 
         # session_exam of courses
-        session_exam_1_learning_unit_biol = create_session_exam(1, learning_unit_year_biol, offer_year_calendar_biol_score_encoding_sess_1)
-        session_exam_2_learning_unit_biol = create_session_exam(2, learning_unit_year_biol, offer_year_calendar_biol_score_encoding_sess_2)
-        session_exam_3_learning_unit_biol = create_session_exam(3, learning_unit_year_biol, offer_year_calendar_biol_score_encoding_sess_3)
+        #session_exam_1_learning_unit_biol = create_session_exam(1, learning_unit_year_biol, offer_year_calendar_biol_score_encoding_sess_1)
+        #session_exam_2_learning_unit_biol = create_session_exam(2, learning_unit_year_biol, offer_year_calendar_biol_score_encoding_sess_2)
+        #session_exam_3_learning_unit_biol = create_session_exam(3, learning_unit_year_biol, offer_year_calendar_biol_score_encoding_sess_3)
 
 
         #student  and offer enrollment and  learning unity
@@ -314,24 +262,24 @@ class Command(BaseCommand):
         for i in range(0, 50):
             user = create_user(fake.user_name(),fake.password(),fake.email())
             student =create_student(user)
-            if(i%2==0):
-               make_learning_unit_enrolement_and_exam_enrollment(learning_unit_year_chim, student, offer_year_chim, session_exam_1_learning_unit_chim)
+            #if(i%2==0):
+            #   make_learning_unit_enrolement_and_exam_enrollment(learning_unit_year_chim, student, offer_year_chim, session_exam_1_learning_unit_chim)
 
-            else :
-               make_learning_unit_enrolement_and_exam_enrollment(learning_unit_year_biol, student, offer_year_biol, session_exam_1_learning_unit_biol)
+            #else :
+            #   make_learning_unit_enrolement_and_exam_enrollment(learning_unit_year_biol, student, offer_year_biol, session_exam_1_learning_unit_biol)
 
         for i in range(0, 60):
                 user = create_user(fake.user_name(), fake.password(), fake.email())
                 student = create_student(user)
-                if (i % 2 == 0):
-                    make_learning_unit_enrolement_and_exam_enrollment(learning_unit_year_chim, student, offer_year_chim, session_exam_2_learning_unit_chim)
-                else:
-                    make_learning_unit_enrolement_and_exam_enrollment(learning_unit_year_biol, student, offer_year_biol, session_exam_2_learning_unit_biol)
+                #if (i % 2 == 0):
+                #   make_learning_unit_enrolement_and_exam_enrollment(learning_unit_year_chim, student, offer_year_chim, session_exam_2_learning_unit_chim)
+                    #else:
+                    #   make_learning_unit_enrolement_and_exam_enrollment(learning_unit_year_biol, student, offer_year_biol, session_exam_2_learning_unit_biol)
         for i in range(0, 70):
             user = create_user(fake.user_name(),fake.password(),fake.email())
             student =create_student(user)
-            if(i%2==0):
-                make_learning_unit_enrolement_and_exam_enrollment(learning_unit_year_chim, student, offer_year_chim, session_exam_3_learning_unit_chim)
-            else:
-                make_learning_unit_enrolement_and_exam_enrollment(learning_unit_year_biol, student, offer_year_biol, session_exam_3_learning_unit_biol)
+            #if(i%2==0):
+            #    make_learning_unit_enrolement_and_exam_enrollment(learning_unit_year_chim, student, offer_year_chim, session_exam_3_learning_unit_chim)
+                #else:
+                # make_learning_unit_enrolement_and_exam_enrollment(learning_unit_year_biol, student, offer_year_biol, session_exam_3_learning_unit_biol)
 

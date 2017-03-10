@@ -11,7 +11,7 @@ def create_academic_year(start_date, end_date):
     return academic_year
 
 
-def create_academic_year_before():
+def create_academic_year_in_past():
     today = date.today()
     start_date =None
     end_date=None
@@ -37,6 +37,6 @@ def create_academic_year_actual():
     return create_academic_year(start_date, end_date)
 
 
-def create_academic_year_after():
+def create_academic_year_in_future():
     today = date.today()
     return create_academic_year(datetime.datetime(today.year+1, 9, 15), datetime.datetime(today.year+2, 9, 14))
