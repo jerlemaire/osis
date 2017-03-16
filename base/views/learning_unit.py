@@ -72,3 +72,24 @@ def learning_unit_read(request, learning_unit_year_id):
                                                          'attributions': attributions,
                                                          'enrollments': enrollments,
                                                          'is_program_manager': is_program_manager})
+
+
+@login_required
+@permission_required('base.can_access_learningunit', raise_exception=True)
+def learning_units_save(request):
+    academic_years = mdl.academic_year.find_academic_years()
+    form = LearningUnitYearForm(request.GET)
+    if form.is_valid():
+        learning_units = form.get_learning_units()
+    else:
+        learning_units = None
+
+    academic_year = form.get_academic_year()
+    academic_years_all=form.set_academic_years_all()
+
+    return layout.render(request, "learning_units.html", {'academic_year': int(academic_year),
+                                                          'academic_years': academic_years,
+                                                          'academic_year_all' : academic_years_all,
+                                                          'learning_units': learning_units,
+                                                          'form':form,
+                                                          'init': "0"})
