@@ -48,10 +48,10 @@ def learning_units_search(request):
     form = LearningUnitsForm(request.GET)
     if form.is_valid():
         learning_units = form.get_learning_units()
-        learning_unit_create=form.check_learning_unit_create()
+        is_learning_unit_create_ok=form.check_learning_unit_create()
     else:
         learning_units = None
-        learning_unit_create=False
+        is_learning_unit_create_ok=False
 
     academic_year = form.get_academic_year()
     academic_years_all=form.set_academic_years_all()
@@ -60,7 +60,7 @@ def learning_units_search(request):
                                                           'academic_years': academic_years,
                                                           'academic_year_all' : academic_years_all,
                                                           'learning_units': learning_units,
-                                                          'learning_unit_create': learning_unit_create,
+                                                          'is_learning_unit_create_ok': is_learning_unit_create_ok,
                                                           'form':form,
                                                           'init': "0"})
 
