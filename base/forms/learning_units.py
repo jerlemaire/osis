@@ -27,7 +27,13 @@ from django import forms
 from base import models as mdl
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+<<<<<<< HEAD:base/forms/learning_units.py
 from base.enums import learning_unit
+=======
+from base.enums import learning_unit_year_status
+from base.enums import learning_unit_year_types
+from base.enums import learning_units_errors
+>>>>>>> a7cb90589f518ca6278ab45946687cb0afa952ea:base/forms/learning_units.py
 
 class LearningUnitsForm(forms.Form):
 
@@ -35,11 +41,19 @@ class LearningUnitsForm(forms.Form):
     acronym = forms.CharField(max_length=20, required=False)
     keyword = forms.CharField(max_length=20, required=False)
     type = forms.CharField(
+<<<<<<< HEAD:base/forms/learning_units.py
         widget=forms.Select(choices=learning_unit.LEARNING_UNIT_YEAR_TYPES),
         required=False
     )
     status=forms.CharField(
         widget=forms.Select(choices=learning_unit.LEARNING_UNIT_YEAR_STATUS),
+=======
+        widget=forms.Select(choices=learning_unit_year_types.LEARNING_UNIT_YEAR_TYPES),
+        required=False
+    )
+    status=forms.CharField(
+        widget=forms.Select(choices=learning_unit_year_status.LEARNING_UNIT_YEAR_STATUS),
+>>>>>>> a7cb90589f518ca6278ab45946687cb0afa952ea:base/forms/learning_units.py
         required=False
     )
 
@@ -51,17 +65,23 @@ class LearningUnitsForm(forms.Form):
         status = clean_data.get('status')
         type = clean_data.get('type')
 
+<<<<<<< HEAD:base/forms/learning_units.py
         data_without_academic_year=acronym+keyword+status+type
 
         if (data_without_academic_year==""):
             raise ValidationError(learning_unit.lu_error_invalid_search)
         elif (str(academic_year) == "-1"):
+=======
+        if (not acronym and not keyword and not status and not type):
+            raise ValidationError(learning_units_errors.INVALID_SEARCH)
+        elif (not academic_year):
+>>>>>>> a7cb90589f518ca6278ab45946687cb0afa952ea:base/forms/learning_units.py
             check_when_academic_year_is_all(acronym,keyword,status,type)
         return clean_data
 
     def set_academic_years_all(self):
         academic_year = self.cleaned_data.get('academic_year')
-        if academic_year=="-1":
+        if not academic_year:
             academic_years_all=1
         else:
             academic_years_all=0
@@ -73,10 +93,10 @@ class LearningUnitsForm(forms.Form):
         keyword = self.cleaned_data.get('keyword')
         status = self.cleaned_data.get('status')
         type = self.cleaned_data.get('type')
-        if (academic_year=="-1" and acronym):
+        if (not academic_year and acronym and not keyword and not status and not type):
             learning_units=mdl.learning_unit_year.find_by_acronym(acronym)
         else:
-            if (academic_year=="-1"):
+            if (not academic_year):
                 learning_units = mdl.learning_unit_year.search(academic_year_id=None,acronym=acronym,title=keyword,type=type,status=status)
             else:
                 learning_units = mdl.learning_unit_year.search(academic_year_id=academic_year,acronym=acronym,title=keyword,type=type,status=status)
@@ -107,6 +127,7 @@ class LearningUnitsForm(forms.Form):
 
 
 def check_when_academic_year_is_all(acronym,keyword,status,type):
+<<<<<<< HEAD:base/forms/learning_units.py
     data_kts = keyword+type+status
     data_ak=acronym+keyword
     data_ts=type+status
@@ -142,3 +163,14 @@ def get_academic_year_relative(academic_year):
     else:
         academic_year_relative=academic_year
     return academic_year_relative
+=======
+    if (acronym):
+        check_learning_units_with_acronym(acronym)
+    elif (not acronym):
+        raise ValidationError(learning_units_errors.ACADEMIC_YEAR_REQUIRED)
+
+def check_learning_units_with_acronym(acronym):
+        learning_units=mdl.learning_unit_year.find_by_acronym(acronym)
+        if not learning_units:
+           raise ValidationError(learning_units_errors.ACADEMIC_YEAR_WITH_ACRONYM)
+>>>>>>> a7cb90589f518ca6278ab45946687cb0afa952ea:base/forms/learning_units.py

@@ -27,8 +27,12 @@ from django.contrib.auth.decorators import login_required, permission_required
 from base import models as mdl
 from attribution import models as mdl_attr
 from . import layout
+<<<<<<< HEAD
 from base.forms.learning_units import LearningUnitsForm
 from base.forms.learning_unit_create import LearningUnitCreateForm
+=======
+from base.forms.learning_units import LearningUnitYearForm
+>>>>>>> a7cb90589f518ca6278ab45946687cb0afa952ea
 
 @login_required
 @permission_required('base.can_access_learningunit', raise_exception=True)
@@ -56,7 +60,7 @@ def learning_units_search(request):
     academic_year = form.get_academic_year()
     academic_years_all=form.set_academic_years_all()
 
-    return layout.render(request, "learning_units.html", {'academic_year': int(academic_year),
+    return layout.render(request, "learning_units.html", {'academic_year': academic_year,
                                                           'academic_years': academic_years,
                                                           'academic_year_all' : academic_years_all,
                                                           'learning_units': learning_units,
