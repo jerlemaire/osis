@@ -27,12 +27,8 @@ from django.contrib.auth.decorators import login_required, permission_required
 from base import models as mdl
 from attribution import models as mdl_attr
 from . import layout
-<<<<<<< HEAD
 from base.forms.learning_units import LearningUnitsForm
 from base.forms.learning_unit_create import LearningUnitCreateForm
-=======
-from base.forms.learning_units import LearningUnitYearForm
->>>>>>> a7cb90589f518ca6278ab45946687cb0afa952ea
 
 @login_required
 @permission_required('base.can_access_learningunit', raise_exception=True)

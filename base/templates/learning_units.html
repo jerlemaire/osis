@@ -50,10 +50,10 @@
                   {% endif %}
 
                 {% for ay in academic_years %}
-                  {% if ay.id == academic_year %}
-                    <option selected value="{{ ay.id }}">{{ ay }}</option>
+                  {% if ay.year == academic_year %}
+                    <option selected value="{{ ay.year }}">{{ ay }}</option>
                   {% else %}
-                    <option value="{{ ay.id }}">{{ ay }}</option>
+                    <option value="{{ ay.year }}">{{ ay }}</option>
                   {% endif %}
                 {% endfor %}
               </select>
@@ -91,7 +91,7 @@
                     <span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
           </div>
         </div>
-        </div>
+      </div>
     </form>
 
   <div >

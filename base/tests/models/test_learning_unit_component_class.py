@@ -35,11 +35,7 @@ from base.models.learning_unit_component_class import LearningUnitComponentClass
 from base.models.learning_class_year import LearningClassYear
 from base.models.learning_class import LearningClass
 from base.models.academic_year import AcademicYear
-<<<<<<< HEAD
-from base.enums import learning_unit as enum_types_ue
-=======
 from base.enums import learning_unit_year_types
->>>>>>> a7cb90589f518ca6278ab45946687cb0afa952ea
 
 now = datetime.datetime.now()
 

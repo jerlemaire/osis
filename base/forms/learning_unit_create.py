@@ -27,14 +27,15 @@ from django import forms
 from base import models as mdl
 from django.utils import timezone
 from django.core.exceptions import ValidationError
-from base.enums import learning_unit
+from base.enums import learning_unit_year_types
+from base.enums import learning_units_errors
 
 class LearningUnitCreateForm(forms.Form):
 
     start_academic_year=forms.CharField(max_length=4, required=True)
     acronym = forms.CharField(max_length=10, required=True)
     type = forms.CharField(
-        widget=forms.Select(choices=learning_unit.LEARNING_UNIT_YEAR_TYPES),
+        widget=forms.Select(choices=learning_unit_year_types.LEARNING_UNIT_YEAR_TYPES),
         required=True
     )
 
@@ -44,11 +45,8 @@ class LearningUnitCreateForm(forms.Form):
         acronym = clean_data.get('acronym').upper()
         type = clean_data.get('type')
 
-        data=start_academic_year+acronym+type
-
-        if (data==""):
-            raise ValidationError(learning_unit.error_invalid_input)
-
+        if (not clean_data):
+            raise ValidationError(learning_units_errors.INVALID)
         return clean_data
 
     def clean_academic_year(self):
@@ -58,7 +56,7 @@ class LearningUnitCreateForm(forms.Form):
 def check_learning_units_with_acronym(acronym):
     learning_units=mdl.learning_unit_year.find_by_acronym(acronym)
     if not learning_units:
-        raise ValidationError(learning_unit.error_academic_year_with_acronym)
+        raise ValidationError(learning_units_errors.ACADEMIC_YEAR_WITH_ACRONYM)
 
 def get_learning_units_with_acronym(acronym):
     learning_units=mdl.learning_unit_year.find_by_acronym(acronym)

@@ -25,7 +25,7 @@
 ##############################################################################
 from django.db import models
 from osis_common.models.serializable_model import SerializableModel, SerializableModelAdmin
-from base.enums.learning_unit import LEARNING_UNIT_PERIODICITY_TYPES
+from base.enums.learning_unit_periodicity import PERIODICITY_TYPES
 
 
 class LearningUnitAdmin(SerializableModelAdmin):
@@ -43,7 +43,7 @@ class LearningUnit(SerializableModel):
     start_year = models.IntegerField()
     end_year = models.IntegerField(blank=True, null=True)
     progress = None
-    periodicity = models.CharField(max_length=20, blank=True, null=True, choices=LEARNING_UNIT_PERIODICITY_TYPES)
+    periodicity = models.CharField(max_length=20, blank=True, null=True, choices=PERIODICITY_TYPES)
 
     def __str__(self):
         return u"%s - %s" % (self.acronym, self.title)
