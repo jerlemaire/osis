@@ -10,18 +10,20 @@ text_denied = "You're out of the period of scores' encodings : the last exams' s
 
 class AccessToProgramDeniedBeforeAcademicYear(StaticLiveServerTestCase):
 
-    def setUpClass(self):
-        super(AccessToProgramDeniedBeforeAcademicYear, self).setUpClass()
-        self.selenium = WebDriver()
-        self.selenium.implicitly_wait(30)
-        self.base_url = url
-        self.verificationErrors = []
-        self.accept_next_alert = True
-        generate_records_academic_year.create_academic_year_before()
+    @classmethod
+    def setUpClass(cls):
+        super(AccessToProgramDeniedBeforeAcademicYear, cls).setUpClass()
+        cls.selenium = WebDriver()
+        #cls.selenium.implicitly_wait(30)
+        #cls.base_url = url
+        #cls.verificationErrors = []
+        #cls.accept_next_alert = True
+        generate_records_academic_year.create_academic_year_in_past()
 
-    def tearDownClass(self):
-        self.selenium.quit()
-        super(AccessToProgramDeniedBeforeAcademicYear, self).tearDownClass()
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super(AccessToProgramDeniedBeforeAcademicYear, cls).tearDownClass()
 
 
     def test_out_of_period_encoding(self):

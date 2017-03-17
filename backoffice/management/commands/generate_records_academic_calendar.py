@@ -2,8 +2,10 @@ from base import models as mdl_base
 import datetime
 from datetime import date
 
+one_day = datetime.timedelta(days=1)
+two_weeks = datetime.timedelta(days=15)
 
-def create_academic_calendar_year(academic_year,start_date, end_date,event):
+def create_academic_calendar(academic_year,start_date, end_date,event):
     today = date.today()
     academic_calendar_year =None
     if (today.month > 9 or today.month <= 2):
@@ -19,16 +21,16 @@ def create_academic_calendar_year(academic_year,start_date, end_date,event):
         academic_calendar_year = mdl_base.academic_calendar.AcademicCalendar(
                 academic_year=academic_year, start_date=start_date,
                 end_date=end_date, title="%s%d" % (event, 3))
-
+    academic_calendar_year.save(functions=[])
     return academic_calendar_year
 
 #encoding date : now > end_date
 def create_academic_calendar_encoding_event_in_past(academic_year):
     encoding_event = 'Encodage de notes session'
     today = date.today()
-    start_date=datetime.datetime(today.year, today.month, today.day-15)
-    end_date=datetime.datetime(today.year, today.month, today.day-1)
-    return  create_academic_calendar_year(academic_year,start_date, end_date,encoding_event)
+    start_date=today- two_weeks  #datetime.datetime(today.year, today.month, today.day-15)
+    end_date= today-one_day # datetime.datetime(today.year, today.month, today.day-1)
+    return  create_academic_calendar(academic_year,start_date, end_date,encoding_event)
 
 
     # encoding date : start_date <=now <= end_date
@@ -36,29 +38,29 @@ def create_academic_calendar_encoding_event_in(academic_year):
     encoding_event = 'Encodage de notes session'
     today = date.today()
     start_date = datetime.datetime(today.year, today.month, today.day)
-    end_date = datetime.datetime(today.year, today.month, today.day+15)
-    return  create_academic_calendar_year(academic_year,start_date, end_date,encoding_event)
+    end_date =  start_date + two_weeks #   datetime.datetime(today.year, today.month, today.day+15)
+    return  create_academic_calendar(academic_year,start_date, end_date,encoding_event)
 
     # encoding date : end_date < now
 def create_academic_calendar_encoding_event_in_fiture(academic_year):
-        encoding_event = 'Encodage de notes session'
-        today = date.today()
-        start_date = datetime.datetime(today.year, today.month, today.day + 1)
-        end_date = datetime.datetime(today.year, today.month, today.day + 15)
-        return create_academic_calendar_year(academic_year,start_date, end_date,encoding_event)
+    encoding_event = 'Encodage de notes session'
+    today = date.today()
+    start_date = today + one_day  # datetime.datetime(today.year, today.month, today.day + 1)
+    end_date = start_date +two_weeks # datetime.datetime(today.year, today.month, today.day + 15)
+    return create_academic_calendar(academic_year,start_date, end_date,encoding_event)
 
         # delibe date :  start_date <=now <= end_date
 def create_academic_calendar_delibe_event_in(academic_year):
     encoding_event = 'Deliberation session'
     today = date.today()
     delibe_date = datetime.datetime(today.year, today.month, today.day)
-    return create_academic_calendar_year(academic_year,delibe_date, delibe_date, encoding_event)
+    return create_academic_calendar(academic_year,delibe_date, delibe_date+one_day, encoding_event)
 
 
     # delibe date :  start_date <=now <= end_date
 def create_academic_calendar_delibe_event_in_fiture(academic_year):
     encoding_event = 'Deliberation session'
     today = date.today()
-    delibe_date = datetime.datetime(today.year, today.month, today.day+1)
-    return create_academic_calendar_year(academic_year, delibe_date, delibe_date, encoding_event)
+    delibe_date = today + one_day # datetime.datetime(today.year, today.month, today.day+1)
+    return create_academic_calendar(academic_year, delibe_date, delibe_date+one_day, encoding_event)
 
