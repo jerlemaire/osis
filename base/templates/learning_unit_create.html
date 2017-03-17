@@ -98,8 +98,14 @@
     {% if learning_units|length == 0 and init == "0" %}
       <label class="alert alert-info" style="margin:5px">{% trans 'no_result' %}</label>
         {% if request.user.is_superuser and learning_unit_create %}
-            <a href="{% url 'learning_unit_create' %}" id="lnk_learning_unit_create" class="btn btn-default" role="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
-       {% endif %}
+            <button type="submit" class="btn btn-primary" title="{% trans 'save'%}" id="bt_academic_calendar_save">
+                <span class="glyphicon glyphicon-save" aria-hidden="true"></span> {% trans 'save'%}
+            </button>
+            <a class="btn btn-default" href="{% url 'academic_calendars' %}" role="button" id="lnk_cancel_academic_calendar">
+                <span class="glyphicon glyphicon-cancel" aria-hidden="true"></span> {% trans 'cancel' %}
+            </a>
+
+      {% endif %}
     {% endif %}
     {% if learning_units|length > 0%}
     <table class="table table-striped table-hover">

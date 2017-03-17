@@ -27,19 +27,19 @@ from django import forms
 from base import models as mdl
 from django.utils import timezone
 from django.core.exceptions import ValidationError
-from base.enums import learning_unit_year
+from base.enums import learning_unit
 
-class LearningUnitYearForm(forms.Form):
+class LearningUnitsForm(forms.Form):
 
     academic_year=forms.CharField(max_length=20, required=False)
     acronym = forms.CharField(max_length=20, required=False)
     keyword = forms.CharField(max_length=20, required=False)
     type = forms.CharField(
-        widget=forms.Select(choices=learning_unit_year.LEARNING_UNIT_YEAR_TYPES),
+        widget=forms.Select(choices=learning_unit.LEARNING_UNIT_YEAR_TYPES),
         required=False
     )
     status=forms.CharField(
-        widget=forms.Select(choices=learning_unit_year.LEARNING_UNIT_YEAR_STATUS),
+        widget=forms.Select(choices=learning_unit.LEARNING_UNIT_YEAR_STATUS),
         required=False
     )
 
@@ -54,7 +54,7 @@ class LearningUnitYearForm(forms.Form):
         data_without_academic_year=acronym+keyword+status+type
 
         if (data_without_academic_year==""):
-            raise ValidationError(learning_unit_year.error_invalid_search)
+            raise ValidationError(learning_unit.lu_error_invalid_search)
         elif (str(academic_year) == "-1"):
             check_when_academic_year_is_all(acronym,keyword,status,type)
         return clean_data
@@ -93,15 +93,16 @@ class LearningUnitYearForm(forms.Form):
         keyword = clean_data.get('keyword')
         status = clean_data.get('status')
         type = clean_data.get('type')
-
-        academic_year=mdl.academic_year.find_academic_year_by_id(int(academic_year))
-        academic_year_relative = get_academic_year_relative(int(academic_year.year))
-        data_without_academic_year_and_acronym=keyword+status+type
-
-        if (academic_year_relative==timezone.now().year and data_without_academic_year_and_acronym==""):
-            learning_unit_create=get_learning_units_with_acronym(acronym)
-        else:
+        if (academic_year=="-1"):
             learning_unit_create=False
+        else:
+            academic_year=mdl.academic_year.find_academic_year_by_id(int(academic_year))
+            academic_year_relative = get_academic_year_relative(int(academic_year.year))
+            data_without_academic_year_and_acronym=keyword+status+type
+            if (academic_year_relative==timezone.now().year and data_without_academic_year_and_acronym==""):
+                learning_unit_create=get_learning_units_with_acronym(acronym)
+            else:
+                learning_unit_create=False
         return learning_unit_create
 
 
@@ -109,12 +110,12 @@ def check_when_academic_year_is_all(acronym,keyword,status,type):
     if (acronym and not keyword and not type and not status):
         check_learning_units_with_acronym(acronym)
     else:
-        raise ValidationError(learning_unit_year.error_academic_year_required)
+        raise ValidationError(learning_unit.lu_error_academic_year_required)
 
 def check_learning_units_with_acronym(acronym):
     learning_units=mdl.learning_unit_year.find_by_acronym(acronym)
     if not learning_units:
-        raise ValidationError(learning_unit_year.error_academic_year_with_acronym)
+        raise ValidationError(learning_unit.lu_error_academic_year_with_acronym)
 
 def get_learning_units_with_acronym(acronym):
     learning_units=mdl.learning_unit_year.find_by_acronym(acronym)

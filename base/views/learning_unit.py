@@ -27,13 +27,14 @@ from django.contrib.auth.decorators import login_required, permission_required
 from base import models as mdl
 from attribution import models as mdl_attr
 from . import layout
-from base.forms.learning_unit_year import LearningUnitYearForm
+from base.forms.learning_units import LearningUnitsForm
+from base.forms.learning_unit_create import LearningUnitCreateForm
 
 @login_required
 @permission_required('base.can_access_learningunit', raise_exception=True)
 def learning_units(request):
 
-    form = LearningUnitYearForm()
+    form = LearningUnitsForm()
     academic_years = mdl.academic_year.find_academic_years()
     return layout.render(request, "learning_units.html", {
                                                           'form':form,
@@ -44,7 +45,7 @@ def learning_units(request):
 @permission_required('base.can_access_learningunit', raise_exception=True)
 def learning_units_search(request):
     academic_years = mdl.academic_year.find_academic_years()
-    form = LearningUnitYearForm(request.GET)
+    form = LearningUnitsForm(request.GET)
     if form.is_valid():
         learning_units = form.get_learning_units()
     else:
@@ -78,20 +79,13 @@ def learning_unit_read(request, learning_unit_year_id):
 
 @login_required
 @permission_required('base.can_access_learningunit', raise_exception=True)
-def learning_units_save(request):
-    academic_years = mdl.academic_year.find_academic_years()
-    form = LearningUnitYearForm(request.GET)
+def learning_unit_create(request):
+    form = LearningUnitCreateForm(request.GET)
     if form.is_valid():
         learning_units = form.get_learning_units()
     else:
         learning_units = None
 
-    academic_year = form.get_academic_year()
-    academic_years_all=form.set_academic_years_all()
-
-    return layout.render(request, "learning_units.html", {'academic_year': int(academic_year),
-                                                          'academic_years': academic_years,
-                                                          'academic_year_all' : academic_years_all,
-                                                          'learning_units': learning_units,
+    return layout.render(request, "learning_unit_create.html", {
                                                           'form':form,
                                                           'init': "0"})
