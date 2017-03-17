@@ -48,12 +48,13 @@ def learning_units_search(request):
     form = LearningUnitsForm(request.GET)
     if form.is_valid():
         learning_units = form.get_learning_units()
+        learning_unit_create=form.check_learning_unit_create()
     else:
         learning_units = None
+        learning_unit_create=False
 
     academic_year = form.get_academic_year()
     academic_years_all=form.set_academic_years_all()
-    learning_unit_create=form.check_learning_unit_create()
 
     return layout.render(request, "learning_units.html", {'academic_year': int(academic_year),
                                                           'academic_years': academic_years,
