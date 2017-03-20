@@ -100,8 +100,8 @@ class LearningUnitsForm(forms.Form):
         if not academic_year or not acronym:
             learning_unit_create=False
         else:
-            academic_year=mdl.academic_year.find_academic_year_by_id(int(academic_year))
-            academic_year_relative = get_academic_year_relative(int(academic_year.year))
+            academic_year=mdl.academic_year.find_academic_year_by_id(int(academic_year)).year
+            academic_year_relative = get_academic_year_relative(int(academic_year))
             if (academic_year_relative==timezone.now().year and not keyword and not status and not type):
                 learning_unit_create=get_learning_units_with_acronym(acronym)
             else:

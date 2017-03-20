@@ -49,10 +49,10 @@
                   {% endif %}
 
                 {% for ay in academic_years %}
-                  {% if ay.year == academic_year %}
-                    <option selected value="{{ ay.year }}">{{ ay }}</option>
+                  {% if ay.id == academic_year %}
+                    <option selected value="{{ ay.id }}">{{ ay }}</option>
                   {% else %}
-                    <option value="{{ ay.year }}">{{ ay }}</option>
+                    <option value="{{ ay.id }}">{{ ay }}</option>
                   {% endif %}
                 {% endfor %}
               </select>
