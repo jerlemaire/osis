@@ -42,21 +42,7 @@
           <font class="error">{{ form.non_field_errors }}</font>
           <div class="col-md-2">
               <label for="academic_year" >{% trans 'academic_year'%}</label>
-              <select class="forms" id="slt_academic_year"  name="academic_year" value="{{ academic_year }}">
-                  {% if academic_years_all == 1 %}
-                    <option selected value="-1">{% trans 'all years'%}</option>
-                  {% else %}
-                    <option value="-1">{% trans 'all years'%}</option>
-                  {% endif %}
-
-                {% for ay in academic_years %}
-                  {% if ay.id == academic_year %}
-                    <option selected value="{{ ay.id }}">{{ ay }}</option>
-                  {% else %}
-                    <option value="{{ ay.id }}">{{ ay }}</option>
-                  {% endif %}
-                {% endfor %}
-              </select>
+              <div class="forms"> {{ form.academic_year }}</div>
               <font class="error">{{ form.academic_year.errors }}</font>
           </div>
 

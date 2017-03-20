@@ -102,7 +102,7 @@ class LearningUnitsForm(forms.Form):
         else:
             academic_year=mdl.academic_year.find_academic_year_by_id(int(academic_year)).year
             academic_year_relative = get_academic_year_relative(int(academic_year))
-            if (academic_year_relative==timezone.now().year and not keyword and not status and not type):
+            if (academic_year_relative==timezone.now().year and not keyword and status=="NONE" and type=="NONE"):
                 learning_unit_create=get_learning_units_with_acronym(acronym)
             else:
                 learning_unit_create=False

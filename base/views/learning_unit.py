@@ -81,11 +81,14 @@ def learning_unit_read(request, learning_unit_year_id):
 @login_required
 @permission_required('base.can_access_learningunit', raise_exception=True)
 def learning_unit_create(request):
-    form = LearningUnitCreateForm(request.GET)
-    if form.is_valid():
-        learning_units = form.get_learning_units()
+    if request.method == 'GET':
+        form = LearningUnitCreateForm(request.GET)
     else:
-        learning_units = None
+        form = LearningUnitCreateForm(request.POST, instance=academic_calendar)
+        if form.is_valid():
+            learning_units = form.get_learning_units()
+            form.save()
+            #return academic_calendar_read(request, academic_cal_form.instance.id)
 
     return layout.render(request, "learning_unit_create.html", {
                                                           'form':form,
