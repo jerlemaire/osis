@@ -26,9 +26,9 @@
 
 from django.utils.translation import ugettext_lazy as _
 
-ANNUAL = "Annual"
-BIENNIAL_EVEN = "Biennal even"
-BIENNIAL_ODD = "Biennal odd"
+ANNUAL = "ANNUAL"
+BIENNIAL_EVEN = "BIENNIAL_EVEN"
+BIENNIAL_ODD = "BIENNIAL_ODD"
 
 PERIODICITY_TYPES = (
     (ANNUAL,  _(ANNUAL)),
