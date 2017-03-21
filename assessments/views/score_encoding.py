@@ -30,7 +30,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test, per
 from django.contrib import messages
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext as trans
-from psycopg2._psycopg import OperationalError as PsycopOperationalError, InterfaceError as  PsycopInterfaceError
+from psycopg2._psycopg import OperationalError as PsycopOperationalError, InterfaceError as PsycopInterfaceError
 from django.db.utils import OperationalError as DjangoOperationalError, InterfaceError as DjangoInterfaceError
 from base import models as mdl
 from assessments import models as mdl_assess
@@ -45,9 +45,19 @@ from osis_common.models.queue_exception import QueueException
 import logging
 from django.conf import settings
 from django.db import connection
+from django.utils import timezone
+
 
 logger = logging.getLogger(settings.DEFAULT_LOGGER)
 queue_exception_logger = logging.getLogger(settings.QUEUE_EXCEPTION_LOGGER)
+
+PGM_DELIBERATION_DATE = "pgm_deliberation_date"
+STUDENT_DELIBERATION_DATE = "student_deliberation_date"
+TUTOR_CLOSING_DATE = "tutor_closing_date"
+LEGAL_DATE = "legal_date"
+
+CLOSING_DATE = "closing_date"
+CLOSING_REASON = "closing_reason"
 
 
 def _is_inside_scores_encodings_period(user):
@@ -56,6 +66,7 @@ def _is_inside_scores_encodings_period(user):
 
 def _is_not_inside_scores_encodings_period(user):
     return not _is_inside_scores_encodings_period(user)
+
 
 @login_required
 @permission_required('base.can_access_evaluation', raise_exception=True)
@@ -848,3 +859,26 @@ def get_json_data_scores_sheets(tutor_global_id):
             log_trace = traceback.format_exc()
             logger.warning('Error during queue logging :\n {}'.format(log_trace))
         return None
+
+
+def get_special_closing_date(dates, is_pgm_mgr):
+    min_date = None
+    min_key = None
+    if is_pgm_mgr:
+        if TUTOR_CLOSING_DATE in dates:
+            del dates[TUTOR_CLOSING_DATE]
+    for key, value in dates.items():
+        if value:
+            value_to_evaluate = value
+            if key == PGM_DELIBERATION_DATE or key == STUDENT_DELIBERATION_DATE:
+                value_to_evaluate = value - timezone.timedelta(days=1)
+            if min_date is None:
+                min_date = value_to_evaluate
+                min_key = key
+            else:
+                if value_to_evaluate < min_date:
+                    min_date = value_to_evaluate
+                    min_key = key
+
+    return {CLOSING_DATE: min_date,
+            CLOSING_REASON: min_key}
