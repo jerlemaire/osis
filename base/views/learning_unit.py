@@ -55,6 +55,7 @@ def learning_units_search(request):
 
     academic_year = form.get_academic_year()
     academic_years_all=form.set_academic_years_all()
+    request.session=form.set_request_session(request)
 
     return layout.render(request, "learning_units.html", {'academic_year': int(academic_year),
                                                           'academic_years': academic_years,
@@ -80,11 +81,15 @@ def learning_unit_read(request, learning_unit_year_id):
 
 @login_required
 @permission_required('base.can_access_learningunit', raise_exception=True)
-def learning_unit_create(request):
+def learning_unit_create(request, academic_year_id):
     if request.method == 'GET':
-        form = LearningUnitCreateForm(request.GET)
+        form = LearningUnitCreateForm()
+        form.fields["acronym"].initial =request.session['acronym']
+        form.fields["acronym"].disabled ='disabled'
+        form.fields["academic_year"].initial =request.session['academic_year']
+        form.fields["academic_year"].disabled ='disabled'
     else:
-        form = LearningUnitCreateForm(request.POST, instance=academic_calendar)
+        form = LearningUnitCreateForm(request.POST)
         if form.is_valid():
             learning_units = form.get_learning_units()
             form.save()
@@ -92,4 +97,4 @@ def learning_unit_create(request):
 
     return layout.render(request, "learning_unit_create.html", {
                                                           'form':form,
-                                                          'init': "0"})
+                                                          })

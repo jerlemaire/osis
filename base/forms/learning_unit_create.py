@@ -32,16 +32,20 @@ from base.enums import learning_units_errors
 
 class LearningUnitCreateForm(forms.Form):
 
-    start_academic_year=forms.CharField(max_length=4, required=True)
-    acronym = forms.CharField(max_length=10, required=True)
+    academic_year=forms.CharField(widget=forms.TextInput(attrs={'size':'10'}),max_length=4, required=True)
+    acronym = forms.CharField(widget=forms.TextInput(attrs={'size':'10'}),max_length=20, required=True)
     type = forms.CharField(
         widget=forms.Select(choices=learning_unit_year_types.LEARNING_UNIT_YEAR_TYPES),
+        required=True
+    )
+    type_complement = forms.CharField(
+        widget=forms.Select(choices=learning_unit_year_types.LEARNING_UNIT_YEAR_TYPES_COMPLEMENT),
         required=True
     )
 
     def clean(self):
         clean_data=self.cleaned_data
-        start_academic_year = clean_data.get('start_academic_year')
+        academic_year = clean_data.get('academic_year')
         acronym = clean_data.get('acronym').upper()
         type = clean_data.get('type')
 
@@ -52,19 +56,9 @@ class LearningUnitCreateForm(forms.Form):
     def clean_academic_year(self):
         academic_year = self.cleaned_data.get('academic_year')
         return academic_year
-
-def check_learning_units_with_acronym(acronym):
-    learning_units=mdl.learning_unit_year.find_by_acronym(acronym)
-    if not learning_units:
-        raise ValidationError(learning_units_errors.ACADEMIC_YEAR_WITH_ACRONYM)
-
-def get_learning_units_with_acronym(acronym):
-    learning_units=mdl.learning_unit_year.find_by_acronym(acronym)
-    if not learning_units:
-        learning_unit_create=True
-    else:
-        learning_unit_create=False
-    return learning_unit_create
+    def get_academic_year(self):
+        academic_year = self.cleaned_data.get('academic_year')
+        return academic_year
 
 def get_academic_year_relative(academic_year):
     year = timezone.now().year
@@ -78,3 +72,16 @@ def get_academic_year_relative(academic_year):
     else:
         academic_year_relative=academic_year
     return academic_year_relative
+
+def check_learning_units_with_acronym(acronym):
+    learning_units=mdl.learning_unit_year.find_by_acronym(acronym)
+    if not learning_units:
+        raise ValidationError(learning_units_errors.ACADEMIC_YEAR_WITH_ACRONYM)
+
+def get_learning_units_with_acronym(acronym):
+    learning_units=mdl.learning_unit_year.find_by_acronym(acronym)
+    if not learning_units:
+        learning_unit_create=True
+    else:
+        learning_unit_create=False
+    return learning_unit_create

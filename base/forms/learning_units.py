@@ -102,11 +102,20 @@ class LearningUnitsForm(forms.Form):
         else:
             academic_year=mdl.academic_year.find_academic_year_by_id(int(academic_year)).year
             academic_year_relative = get_academic_year_relative(int(academic_year))
-            if (academic_year_relative==timezone.now().year and not keyword and status=="NONE" and type=="NONE"):
+            if academic_year_relative>=timezone.now().year and not keyword and status=="NONE" and type=="NONE":
                 learning_unit_create=get_learning_units_with_acronym(acronym)
             else:
                 learning_unit_create=False
         return learning_unit_create
+
+    def set_request_session(self,request):
+        acronym=self.cleaned_data.get('acronym')
+        academic_year_id=self.cleaned_data.get('academic_year')
+        academic_year=mdl.academic_year.find_academic_year_by_id(int(academic_year_id)).__str__()
+        request.session['academic_year'] = academic_year
+        request.session['acronym'] = acronym
+        return request.session
+
 
 def check_when_academic_year_is_all(acronym):
     if (acronym):
@@ -114,10 +123,12 @@ def check_when_academic_year_is_all(acronym):
     elif (not acronym):
         raise ValidationError(learning_units_errors.ACADEMIC_YEAR_REQUIRED)
 
+
 def check_learning_units_with_acronym(acronym):
     learning_units=mdl.learning_unit_year.find_by_acronym(acronym)
     if not learning_units:
         raise ValidationError(learning_units_errors.ACADEMIC_YEAR_WITH_ACRONYM)
+
 
 def get_learning_units_with_acronym(acronym):
     learning_units=mdl.learning_unit_year.find_by_acronym(acronym)
@@ -127,14 +138,15 @@ def get_learning_units_with_acronym(acronym):
         learning_unit_create=False
     return learning_unit_create
 
+
 def get_academic_year_relative(academic_year):
     year = timezone.now().year
     month = timezone.now().month
-    if (month>=9 and month<=12):
+    if month>=9 and month<=12:
         academic_year_relative=academic_year
-    elif (month>=1 and month<=8 and academic_year==year):
+    elif month>=1 and month<=8 and academic_year==year:
         academic_year_relative=academic_year
-    elif (month>=1 and month<=8 and academic_year<year):
+    elif month>=1 and month<=8 and academic_year<year:
         academic_year_relative=academic_year+1
     else:
         academic_year_relative=academic_year
