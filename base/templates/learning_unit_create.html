@@ -39,6 +39,7 @@
   <div class="panel-body">
     <div class="row">
       <form  method="post" action="{% url 'learning_unit_create' %}" id="form_learning_unit_create">
+     {% csrf_token %}
 
           <div class="col-md-2">
               <label for="academic_year">{% trans 'academic_year'%}</label>
@@ -57,12 +58,20 @@
               <div class="forms"> {{ form.type_complement }}</div>
           </div>
 
-          <div class="col-md-2">
+          <div>
+              <div class="forms"> {{ form.academic_year_id }}</div>
           </div>
       </form>
     </div>
   </div>
 
+    {% if form.non_field_errors %}
+      <ul class='error'>
+          {% for error in form.non_field_errors %}
+              <li>{% trans error %}</li>
+          {% endfor %}
+      </ul>
+    {% endif %}
     {% if request.user.is_superuser %}
     <button type="submit" class="btn btn-primary" title="{% trans 'save'%}" id="bt_learning_unit_create">
         <span class="glyphicon glyphicon-save" aria-hidden="true"></span> {% trans 'save'%}

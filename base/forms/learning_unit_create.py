@@ -33,6 +33,7 @@ from base.enums import learning_units_errors
 class LearningUnitCreateForm(forms.Form):
 
     academic_year=forms.CharField(widget=forms.TextInput(attrs={'size':'10'}),max_length=4, required=True)
+    academic_year_id=forms.CharField(widget=forms.HiddenInput())
     acronym = forms.CharField(widget=forms.TextInput(attrs={'size':'10'}),max_length=20, required=True)
     type = forms.CharField(
         widget=forms.Select(choices=learning_unit_year_types.LEARNING_UNIT_YEAR_TYPES),
@@ -45,20 +46,10 @@ class LearningUnitCreateForm(forms.Form):
 
     def clean(self):
         clean_data=self.cleaned_data
-        academic_year = clean_data.get('academic_year')
-        acronym = clean_data.get('acronym').upper()
-        type = clean_data.get('type')
-
         if (not clean_data):
             raise ValidationError(learning_units_errors.INVALID)
         return clean_data
 
-    def clean_academic_year(self):
-        academic_year = self.cleaned_data.get('academic_year')
-        return academic_year
-    def get_academic_year(self):
-        academic_year = self.cleaned_data.get('academic_year')
-        return academic_year
 
 def get_academic_year_relative(academic_year):
     year = timezone.now().year

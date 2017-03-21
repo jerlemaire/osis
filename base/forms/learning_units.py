@@ -109,9 +109,10 @@ class LearningUnitsForm(forms.Form):
         return learning_unit_create
 
     def set_request_session(self,request):
-        acronym=self.cleaned_data.get('acronym')
+        acronym=self.cleaned_data.get('acronym').upper()
         academic_year_id=self.cleaned_data.get('academic_year')
         academic_year=mdl.academic_year.find_academic_year_by_id(int(academic_year_id)).__str__()
+        request.session['academic_year_id'] = academic_year_id
         request.session['academic_year'] = academic_year
         request.session['acronym'] = acronym
         return request.session

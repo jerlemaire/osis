@@ -88,6 +88,7 @@ def learning_unit_create(request, academic_year_id):
         form.fields["acronym"].disabled ='disabled'
         form.fields["academic_year"].initial =request.session['academic_year']
         form.fields["academic_year"].disabled ='disabled'
+        form.fields["academic_year_id"].initial =request.session['academic_year_id']
     else:
         form = LearningUnitCreateForm(request.POST)
         if form.is_valid():
