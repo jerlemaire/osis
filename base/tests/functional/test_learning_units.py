@@ -31,7 +31,7 @@ import time
 import unittest
 
 
-class NewSearchTest(unittest.TestCase):
+class LearningUnitsSearchTest(unittest.TestCase):
 
     def setUp(self):
         self.browser = webdriver.Firefox()
@@ -39,7 +39,7 @@ class NewSearchTest(unittest.TestCase):
     def tearDown(self):
         self.browser.quit()
 
-    def test_retrieve_learning_units_from_search_with_full_acronym_only(self):
+    def test_retrieve_learning_units_from_search_with_valid_acronym_only(self):
         # Sarah needs to check out an existing learning_unit
         # She goes on the homepage to log in
         self.browser.get('http://127.0.0.1:8000/')
@@ -85,11 +85,22 @@ class NewSearchTest(unittest.TestCase):
         time.sleep(1)
         table = self.browser.find_element_by_id('table_learning_units')
         cols = table.find_elements_by_tag_name('td')
-        self.assertTrue(
-            any(cols.text == 'DROI1212' for cols in cols)
-        )
+        self.assertIn('DROI1212', [cols.text for cols in cols])
         # She sees that this acronym already exists and the corresponding class is still valid for a particular year
         # Satisfied, she logs out.
+
+
+    #def test_error_when_search_has_no_input_value_given_by_user(self):
+
+
+    #def test_error_when_search_has_no_academic_year_given_by_user(self):
+
+
+    #def test_error_when_search_has_academic_year_but_no_other_input_value_given_by_user(self):
+
+
+    #def test_search_with_academic_year_and_acronym_valid_only_returns_nothing_then_user_can_add_new_learning_unit(self):
+
 
 if __name__ == '__main__':
     unittest.main(warnings='ignore')
