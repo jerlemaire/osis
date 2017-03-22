@@ -55,7 +55,10 @@ def learning_units_search(request):
 
     academic_year = form.get_academic_year()
     academic_years_all=form.set_academic_years_all()
-    request.session=form.set_request_session(request)
+
+    if is_learning_unit_create_ok:
+        request.session=form.set_request_session(request)
+
 
     return layout.render(request, "learning_units.html", {'academic_year': int(academic_year),
                                                           'academic_years': academic_years,
