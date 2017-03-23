@@ -1016,6 +1016,9 @@ msgstr "score(s) saved"
 msgid "scores_saved_cannot_be_saved_anymore"
 msgstr "Sore saved, button save not available anymore"
 
+msgid "scores_must_be_between_0_and_20"
+msgstr "Scores must be between 0 and 20"
+
 msgid "scores_sheet"
 msgstr "Scores sheet"
 
@@ -1187,6 +1190,9 @@ msgstr "Back to messages"
 
 msgid "tutors"
 msgstr "Tutors"
+
+msgid "other_tutors"
+msgstr "Other Tutors"
 
 msgid "txt_message"
 msgstr "Text Message"
@@ -1417,3 +1423,8 @@ msgstr "with practical class"
 msgid "LU_WITHOUT_PC"
 msgstr "without practical class"
 
+msgid "no_valid_m_justification_error"
+msgstr "You can't encode a JUSTIFIED ABSENCE (M) via the XLS injection"
+
+msgid "abscence_justified_preserved"
+msgstr "Justified abscence already encoded and preserved"
