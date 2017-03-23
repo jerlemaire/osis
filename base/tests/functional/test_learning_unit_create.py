@@ -28,11 +28,8 @@ from selenium import webdriver
 
 # Sarah needs to check out an existing learning_unit
 # She goes on the homepage to log in
-browser = webdriver.Firefox()
-browser.get('http://127.0.0.1:8000/')
 
 # She notices the page title 'OSIS' and the header menu on the top
-assert 'OSIS' in browser.title
 
 # She goes in the header menu and clicks on 'Formation Catalogue'
 # and then 'Learning Units' to be on the search page of learning units
