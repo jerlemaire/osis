@@ -38,7 +38,7 @@ class LearningUnitsSearchTest(unittest.TestCase):
     def setUp(self):
         self.browser = webdriver.Firefox()
 
-    def error_is_displayed(self,error_msg):
+    def error_displayed(self,error_msg):
         start_time = time.time()
         while True:
             try:
@@ -50,7 +50,7 @@ class LearningUnitsSearchTest(unittest.TestCase):
                     raise e
                 time.sleep(0.5)
 
-    def home_page(self):
+    def go_home_page(self):
         start_time = time.time()
         while True:
             try:
@@ -62,6 +62,20 @@ class LearningUnitsSearchTest(unittest.TestCase):
                 if time.time() - start_time > MAX_WAIT:
                     raise e
                 time.sleep(0.5)
+
+    def go_learning_units_page(self):
+        # She goes on the homepage to log in
+        self.browser.get('http://127.0.0.1:8000/')  # We should use : self.live_server_url
+        self.go_home_page()
+
+        # She is invited to log in
+        self.user_logs_in('defat','osis')
+
+        # She goes in the header menu and clicks on 'Formation Catalogue'
+        # and then 'Learning Units' to go on the search page of learning units.
+        self.browser.get('http://127.0.0.1:8000/learning_units/')
+        # She notices the title of the learning units search page
+        self.wait_for_tag('h2','learning_units')
 
     def user_logs_in(self, usr, pwd):
         inputbox_login_usr = self.browser.find_element_by_id('id_username')
@@ -132,18 +146,7 @@ class LearningUnitsSearchTest(unittest.TestCase):
 
     def test_retrieve_learning_units_from_search_with_valid_acronym_only(self):
         # Sarah needs to check out an existing learning_unit
-        # She goes on the homepage to log in
-        self.browser.get('http://127.0.0.1:8000/')  # We should use : self.live_server_url
-        self.home_page()
-
-        # She is logging in
-        self.user_logs_in('defat','osis')
-
-        # She goes in the header menu and clicks on 'Formation Catalogue'
-        # and then 'Learning Units' to go on the search page of learning units.
-        self.browser.get('http://127.0.0.1:8000/learning_units/')
-        # She notices the title of the learning units search page
-        self.wait_for_tag('h2','learning_units')
+        self.go_learning_units_page()
 
         # She enters a valid acronym only,
         # to see if a learning unit exists in a particular year.
@@ -162,18 +165,7 @@ class LearningUnitsSearchTest(unittest.TestCase):
 
     def test_error_when_search_has_no_input_value_given_by_user(self):
         # Sarah needs to check out an existing learning_unit
-        # She goes on the homepage to log in
-        self.browser.get('http://127.0.0.1:8000/')  # We should use : self.live_server_url
-        self.home_page()
-
-        # She is invited to log in
-        self.user_logs_in('defat','osis')
-
-        # She goes in the header menu and clicks on 'Formation Catalogue'
-        # and then 'Learning Units' to go on the search page of learning units.
-        self.browser.get('http://127.0.0.1:8000/learning_units/')
-        # She notices the title of the learning units search page
-        self.wait_for_tag('h2','learning_units')
+        self.go_learning_units_page()
 
         # She starts a search by pressing ENTER by mistake,
         # without entering any input values
@@ -181,8 +173,8 @@ class LearningUnitsSearchTest(unittest.TestCase):
         login_button.send_keys(Keys.ENTER)
 
         # She sees an error when the page refreshes
-        self.error_is_displayed('LU_ERRORS_INVALID_SEARCH')
-        
+        self.error_displayed('LU_ERRORS_INVALID_SEARCH')
+
         # Unhappy of the situation, she closes the browser...
 
     #def test_error_when_search_has_no_academic_year_given_by_user(self):
