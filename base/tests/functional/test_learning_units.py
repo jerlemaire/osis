@@ -27,6 +27,7 @@
 from django.utils.translation import ugettext_lazy as _
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import WebDriverException
 import time
 import unittest
@@ -177,8 +178,58 @@ class LearningUnitsSearchTest(unittest.TestCase):
 
         # Unhappy of the situation, she closes the browser...
 
-    #def test_error_when_search_has_no_academic_year_given_by_user(self):
+    def test_error_when_search_has_invalid_acronym_and_no_academic_year_given_by_user(self):
+        # Sarah needs to check out an existing learning_unit
+        self.go_learning_units_page()
 
-    #def test_error_when_search_has_academic_year_but_no_other_input_value_given_by_user(self):
+        # She enters a non-valid acronym and doesnt specify an academic year,
+        # to see if a learning unit exists in a particular year.
+        inputbox_acronym=self.browser.find_element_by_id('id_acronym')
+        inputbox_acronym.send_keys('DROI12')
 
-    #def test_search_with_academic_year_and_acronym_valid_only_returns_nothing_then_user_can_add_new_learning_unit(self):
+        # She starts a search by pressing ENTER
+        login_button= self.browser.find_element_by_id('bt_submit_learning_unit_search')
+        login_button.send_keys(Keys.ENTER)
+
+        # She sees an error when the page refreshes
+        self.error_displayed('LU_ERRORS_YEAR_WITH_ACRONYM')
+
+        # Unhappy of the situation, she closes the browser...
+
+    def test_error_when_search_has_no_acronym_and_no_academic_year_given_by_user(self):
+        # Sarah needs to check out an existing learning_unit
+        self.go_learning_units_page()
+
+        # She enters a keyword only and doesnt specify an academic year,
+        # to see if a learning unit exists in a particular year.
+        inputbox_keyword=self.browser.find_element_by_id('id_keyword')
+        inputbox_keyword.send_keys('droit')
+
+        # She starts a search by pressing ENTER
+        login_button= self.browser.find_element_by_id('bt_submit_learning_unit_search')
+        login_button.send_keys(Keys.ENTER)
+
+        # She sees an error when the page refreshes
+        self.error_displayed('LU_ERRORS_ACADEMIC_YEAR_REQUIRED')
+
+        # Unhappy of the situation, she closes the browser...
+
+    def test_error_when_search_has_academic_year_but_no_other_input_value_given_by_user(self):
+        # Sarah needs to check out an existing learning_unit
+        self.go_learning_units_page()
+
+        # She enters a keyword only and doesnt specify an academic year,
+        # to see if a learning unit exists in a particular year.
+        # navigate to the page
+        academic_year = Select(self.browser.find_element_by_id('slt_academic_year'))
+        #print ([ay.text for ay in academic_year.options])
+        academic_year.select_by_visible_text('2016-2017')
+
+        # She starts a search by pressing ENTER
+        login_button= self.browser.find_element_by_id('bt_submit_learning_unit_search')
+        login_button.send_keys(Keys.ENTER)
+
+        # She sees an error when the page refreshes
+        self.error_displayed('LU_ERRORS_INVALID_SEARCH')
+
+        # Unhappy of the situation, she closes the browser...
