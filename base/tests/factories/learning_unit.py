@@ -28,7 +28,7 @@ import factory.fuzzy
 import string
 import datetime
 import operator
-from base.enums import learning_unit
+from base.enums import learning_unit_periodicity
 from django.conf import settings
 from django.utils import timezone
 
@@ -50,5 +50,5 @@ class LearningUnitFactory(factory.django.DjangoModelFactory):
     description =factory.LazyAttribute(lambda obj : 'Fake description of learning unit %s' % obj.acronym )
     start_year = factory.fuzzy.FuzzyInteger(2000, timezone.now().year)
     end_year = factory.LazyAttribute(lambda obj: factory.fuzzy.FuzzyInteger(obj.start_year + 1, obj.start_year + 9).fuzz())
-    periodicity = factory.Iterator(learning_unit.LEARNING_UNIT_PERIODICITY_TYPES, getter=operator.itemgetter(0))
+    periodicity = factory.Iterator(learning_unit_periodicity.PERIODICITY_TYPES, getter=operator.itemgetter(0))
 
