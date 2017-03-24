@@ -47,45 +47,23 @@ class LearningUnitsSearchTest(StaticLiveServerTestCase):
                                 password='superpwd')
 
     def error_displayed(self,error_msg):
-        start_time = time.time()
-        while True:
-            try:
-                error_invalid_search= self.browser.find_element_by_class_name('error').text
-                self.assertEqual(_(error_msg), error_invalid_search)
-                return
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-                time.sleep(0.5)
-
-    def go_to_home_page(self):
-        start_time = time.time()
-        while True:
-            try:
-                self.assertIn('OSIS', self.browser.title)
-                header_text = self.browser.find_element_by_tag_name('h1').text
-                self.assertIn('Log-in', header_text)
-                return
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-                time.sleep(0.5)
+        self.wait_for(lambda: self.assertEqual(_(error_msg), self.browser.find_element_by_class_name('error').text))
 
     def go_to_learning_units_page(self):
         # She goes on the homepage to log in
         self.browser.get(self.live_server_url)
-        self.go_to_home_page()
+        self.wait_for(lambda: self.assertIn('Log-in',self.browser.find_element_by_tag_name('h1').text))
 
         # She is invited to log in
-        self.user_logs_in()
+        self.the_user_logs_in()
 
         # She goes in the header menu and clicks on 'Formation Catalogue'
         # and then 'Learning Units' to go on the search page of learning units.
         self.browser.get(self.live_server_url+'/learning_units/')
         # She notices the title of the learning units search page
-        self.wait_for_tag_name('h2','learning_units')
+        self.wait_for(lambda: self.assertEqual(_('learning_units'),self.browser.find_element_by_tag_name('h2').text))
 
-    def user_logs_in(self):
+    def the_user_logs_in(self):
         inputbox_login_usr = self.browser.find_element_by_id('id_username')
         self.assertEqual(
             inputbox_login_usr.get_attribute('placeholder'),
@@ -100,60 +78,19 @@ class LearningUnitsSearchTest(StaticLiveServerTestCase):
         inputbox_login_pwd.send_keys('superpwd')
         login_button = self.browser.find_element_by_id('post_login_btn')
         login_button.send_keys(Keys.ENTER)
-        start_time = time.time()
-        while True:
-            try:
-                dropdown_text = self.browser.find_element_by_id('lnk_home_dropdown_catalog').text
-                self.assertEqual(_('formation_catalogue'), dropdown_text)
-                return
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-                time.sleep(0.5)
+        ## Wait for the home_page to load on screen
+        self.wait_for(lambda:self.assertEqual(_('formation_catalogue'), self.browser.find_element_by_id('lnk_home_dropdown_catalog').text))
 
-    def wait_for_row_in_list_table(self, row_text):
-        start_time = time.time()
-        while True:
-            try:
-                table = self.browser.find_element_by_id('table_learning_units')
-                rows = table.find_elements_by_tag_name('tr')
-                self.assertIn(row_text, [row.text for row in rows])
-                return
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-                time.sleep(0.5)
+    def wait_for_text_in_table(self, table_id, text_to_find, row_or_col):
+        #table = self.browser.find_element_by_id(table_id)
+        #elements = table.find_elements_by_tag_name(row_or_col)
+        self.wait_for(lambda:self.assertIn(text_to_find, [element.text for element in self.browser.find_element_by_id(table_id).find_elements_by_tag_name(row_or_col)]))
 
-    def wait_for_cols_in_list_table(self, col_text):
+    def wait_for(self, fct):
         start_time = time.time()
         while True:
             try:
-                table = self.browser.find_element_by_id('table_learning_units')
-                cols = table.find_elements_by_tag_name('td')
-                self.assertIn(col_text, [col.text for col in cols])
-                return
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-                time.sleep(0.5)
-
-    def wait_for_tag_name(self,tag_name,tag_value):
-        start_time = time.time()
-        while True:
-            try:
-                header_text = self.browser.find_element_by_tag_name(tag_name).text
-                self.assertEqual(_(tag_value), header_text)
-                return
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e
-                time.sleep(0.5)
-
-    def wait_for(self):
-        start_time = time.time()
-        while True:
-            try:
-                return
+                return fct()
             except (AssertionError, WebDriverException) as e:
                 if time.time() - start_time > MAX_WAIT:
                     raise e
@@ -179,7 +116,7 @@ class LearningUnitsSearchTest(StaticLiveServerTestCase):
         login_button.send_keys(Keys.ENTER)
 
         #She now can see the response returned by the application
-        self.wait_for_cols_in_list_table(learning_unit_year_seed.acronym)
+        self.wait_for_text_in_table('table_learning_units',learning_unit_year_seed.acronym,'td')
 
         # She sees that this acronym already exists and the corresponding class is still valid for a particular year
         # Satisfied, she logs out.
