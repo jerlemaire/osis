@@ -30,7 +30,6 @@ import datetime
 from django.conf import settings
 from django.utils import timezone
 from factory.django import DjangoModelFactory
-from faker.providers import BaseProvider
 from faker import Faker
 fake = Faker()
 

@@ -241,6 +241,9 @@ msgid "decimal_values_ignored"
 msgstr ""
 "Les notes de ce cours ne peuvent PAS recevoir de valeurs décimales."
 
+msgid "score_have_more_than_2_decimal_places"
+msgstr "La note comporte plus de deux chiffres après la virgule"
+
 msgid "definitive_save"
 msgstr "Sauvegarde définitive (soumettre à la faculté)"
 
@@ -293,6 +296,9 @@ msgstr ""
 "Gestion des cours, des formations et d'autres activités qui composent le "
 "programme."
 
+msgid "desc_lnk_my_osis"
+msgstr "Vos données personnelles, des préférences et d'autres informations associés."
+
 msgid "desc_lnk_offers"
 msgstr "Gestion des programmes."
 
@@ -332,7 +338,7 @@ msgid "doctoral_commission"
 msgstr "Commision doctorale"
 
 msgid "documentation"
-msgstr "Justification"
+msgstr "Documentation"
 
 msgid "done_at"
 msgstr "Fait à"
@@ -1256,9 +1262,6 @@ msgid "xls_columns_structure_error"
 msgstr "Votre fichier excel n'est pas bien structuré. Veuillez respecter l'ordre des colonnes fournie lors du "
        "téléchargement de votre fichier (bouton '{}')."
 
-msgid "admission_form"
-msgstr "Formulaire d'admission"
-
 msgid "order"
 msgstr "Ordonner"
 
@@ -1416,8 +1419,18 @@ msgstr "avec travaux pratiques"
 msgid "LU_WITHOUT_PC"
 msgstr "sans travaux pratiques"
 
+msgid "ANNUAL"
+msgstr "Annuel"
+msgid "BIENNIAL_EVEN"
+msgstr "Bisannuel pair"
+msgid "BIENNIAL_ODD"
+msgstr "Bisannuel impair"
+
 msgid "no_valid_m_justification_error"
 msgstr "Vous ne pouvez pas encoder d'absence justifiée (M) via l'injection xls"
 
 msgid "abscence_justified_preserved"
 msgstr "Abscence justifiée dèjà encodée et préservée"
+
+msgid "all_years"
+msgstr "Toutes les années"

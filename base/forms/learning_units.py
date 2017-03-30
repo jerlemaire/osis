@@ -46,48 +46,37 @@ class LearningUnitsForm(forms.Form):
     )
 
     def clean(self):
-        clean_data=self.cleaned_data
-        academic_year = clean_data.get('academic_year')
-        acronym = clean_data.get('acronym').upper()
-        keyword = clean_data.get('keyword')
-        status = clean_data.get('status')
-        type = clean_data.get('type')
+        minimal_inputs_satisfied=''
+        clean_data = self.cleaned_data
+        for cd_key, cd_value in clean_data.items():
+            if cd_value=='NONE' or cd_value=='0':
+                clean_data[cd_key]=''
+            minimal_inputs_satisfied=minimal_inputs_satisfied+clean_data[cd_key]
 
-        if (not acronym and not keyword and status=="NONE" and type=="NONE"):
+        if not minimal_inputs_satisfied:
             raise ValidationError(learning_units_errors.INVALID_SEARCH)
-        elif academic_year=="0":
-            check_when_academic_year_is_all(acronym)
+        elif not clean_data.get('academic_year'):
+            check_when_academic_year_is_all(clean_data.get('acronym'))
         return clean_data
 
     def set_academic_years_all(self):
-        academic_year = self.cleaned_data.get('academic_year')
-        if academic_year=="0":
-            academic_years_all=1
-        else:
-            academic_years_all=0
+        academic_years_all = True if not self.cleaned_data.get('academic_year') else False
         return academic_years_all
 
     def get_learning_units(self):
-        academic_year = self.cleaned_data.get('academic_year')
-        acronym = self.cleaned_data.get('acronym').upper()
-        keyword = self.cleaned_data.get('keyword')
-        status = self.cleaned_data.get('status')
-        type = self.cleaned_data.get('type')
-        if status=="NONE":
-            status=None
-        if type=="NONE":
-            type=None
-        if (academic_year=="0" and acronym and not keyword and not status and not type):
-            learning_units=mdl.learning_unit_year.find_by_acronym(acronym)
+        clean_data = self.cleaned_data
+        if not clean_data.get('academic_year'):
+            learning_units = check_when_academic_year_is_all(clean_data.get('acronym'))
         else:
-            if (academic_year=="0"):
-                learning_units = mdl.learning_unit_year.search(academic_year_id=None,acronym=acronym,title=keyword,type=type,status=status)
-            else:
-                learning_units = mdl.learning_unit_year.search(academic_year_id=academic_year,acronym=acronym,title=keyword,type=type,status=status)
+            learning_units = mdl.learning_unit_year.search(academic_year_id=clean_data.get('academic_year'),
+                                                           acronym=clean_data.get('acronym'),
+                                                           title=clean_data.get('keyword'),
+                                                           type=clean_data.get('type'),
+                                                           status=clean_data.get('status'))
         return learning_units
 
     def get_academic_year(self):
-        academic_year = self.cleaned_data.get('academic_year')
+        academic_year = 0 if not self.cleaned_data.get('academic_year') else self.cleaned_data.get('academic_year')
         return academic_year
 
     def check_learning_unit_create(self):
@@ -120,7 +109,8 @@ class LearningUnitsForm(forms.Form):
 
 def check_when_academic_year_is_all(acronym):
     if (acronym):
-        check_learning_units_with_acronym(acronym)
+        learning_units=check_learning_units_with_acronym(acronym)
+        return learning_units
     elif (not acronym):
         raise ValidationError(learning_units_errors.ACADEMIC_YEAR_REQUIRED)
 
@@ -129,6 +119,8 @@ def check_learning_units_with_acronym(acronym):
     learning_units=mdl.learning_unit_year.find_by_acronym(acronym)
     if not learning_units:
         raise ValidationError(learning_units_errors.ACADEMIC_YEAR_WITH_ACRONYM)
+    else:
+        return learning_units
 
 
 def get_learning_units_with_acronym(acronym):

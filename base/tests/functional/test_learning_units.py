@@ -27,12 +27,12 @@
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.utils.translation import ugettext_lazy as _
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import WebDriverException
 from base.tests.factories.academic_year import AcademicYearFakerFactory
 from base.tests.factories.learning_unit_year import LearningUnitYearFakerFactory
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 import time
 
 MAX_WAIT = 10
@@ -41,13 +41,16 @@ MAX_WAIT = 10
 class LearningUnitsSearchTest(StaticLiveServerTestCase):
 
     def setUp(self):
-        self.browser = webdriver.Firefox()
+        self.browser = webdriver.PhantomJS()
+        self.browser.set_window_size(1280, 720)
+
         User.objects.create_superuser(username='superdummy',
                                  email='superdummy@dummy.com',
-                                password='superpwd')
+                                password='superpassword')
 
     def error_displayed(self,error_msg):
-        self.wait_for(lambda: self.assertEqual(_(error_msg), self.browser.find_element_by_class_name('error').text))
+        #self.wait_for(lambda: self.assertEqual(_(error_msg), self.browser.find_element_by_class_name('error').text))
+        self.wait_for(lambda: self.browser.find_element_by_class_name('error').is_displayed())
 
     def go_to_learning_units_page(self):
         # She goes on the homepage to log in
@@ -61,7 +64,7 @@ class LearningUnitsSearchTest(StaticLiveServerTestCase):
         # and then 'Learning Units' to go on the search page of learning units.
         self.browser.get(self.live_server_url+'/learning_units/')
         # She notices the title of the learning units search page
-        self.wait_for(lambda: self.assertEqual(_('learning_units'),self.browser.find_element_by_tag_name('h2').text))
+        self.wait_for(lambda: self.browser.find_element_by_tag_name('h2').is_displayed())
 
     def the_user_logs_in(self):
         inputbox_login_usr = self.browser.find_element_by_id('id_username')
@@ -75,15 +78,13 @@ class LearningUnitsSearchTest(StaticLiveServerTestCase):
             _('password')
         )
         inputbox_login_usr.send_keys('superdummy')
-        inputbox_login_pwd.send_keys('superpwd')
+        inputbox_login_pwd.send_keys('superpassword')
         login_button = self.browser.find_element_by_id('post_login_btn')
         login_button.send_keys(Keys.ENTER)
         ## Wait for the home_page to load on screen
-        self.wait_for(lambda:self.assertEqual(_('formation_catalogue'), self.browser.find_element_by_id('lnk_home_dropdown_catalog').text))
+        self.wait_for(lambda:self.browser.find_element_by_id('lnk_home_dropdown_catalog').is_displayed())
 
     def wait_for_text_in_table(self, table_id, text_to_find, row_or_col):
-        #table = self.browser.find_element_by_id(table_id)
-        #elements = table.find_elements_by_tag_name(row_or_col)
         self.wait_for(lambda:self.assertIn(text_to_find, [element.text for element in self.browser.find_element_by_id(table_id).find_elements_by_tag_name(row_or_col)]))
 
     def wait_for(self, fct):
@@ -93,6 +94,9 @@ class LearningUnitsSearchTest(StaticLiveServerTestCase):
                 return fct()
             except (AssertionError, WebDriverException) as e:
                 if time.time() - start_time > MAX_WAIT:
+                    self.browser.save_screenshot('screenshot.png')
+                    print('BROWSER_GET_LOG: '+str(self.browser.get_log('har')))
+                    print('BROWSER_GET_HTML: '+str(self.browser.execute_script("return document.getElementsByTagName('html')[0].innerHTML")))
                     raise e
                 time.sleep(0.5)
 
@@ -180,7 +184,16 @@ class LearningUnitsSearchTest(StaticLiveServerTestCase):
 
         # She enters a keyword only and doesnt specify an academic year,
         # to see if a learning unit exists in a particular year.
-        self.wait_for(lambda: Select(self.browser.find_element_by_id('slt_academic_year')).select_by_visible_text(academic_year_seed.name))
+        start_time = time.time()
+        while True:
+            try:
+                academic_year = Select(self.browser.find_element_by_id('slt_academic_year'))
+                academic_year.select_by_visible_text(academic_year_seed.name)
+                return
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
+                time.sleep(0.5)
 
         # She starts a search by pressing ENTER
         login_button= self.browser.find_element_by_id('bt_submit_learning_unit_search')

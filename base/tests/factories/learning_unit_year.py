@@ -33,9 +33,7 @@ from base.tests.factories.academic_year import AcademicYearFactory
 from base.tests.factories.academic_year import AcademicYearFakerFactory
 from base.tests.factories.learning_unit import LearningUnitFactory
 from base.tests.factories.learning_unit import LearningUnitFakerFactory
-from base.tests.factories.learning_container_year import LearningContainerYearFactory
 from factory.django import DjangoModelFactory
-from faker.providers import BaseProvider
 from faker import Faker
 fake = Faker()
 
@@ -72,7 +70,7 @@ class LearningUnitYearFakerFactory(DjangoModelFactory):
     external_id = factory.Sequence(lambda n: '10000000%02d' % n)
     academic_year = factory.SubFactory(AcademicYearFakerFactory)
     learning_unit = factory.SubFactory(LearningUnitFakerFactory)
-    learning_container_year = None #factory.SubFactory(LearningContainerYearFactory)
+    learning_container_year = None
     changed = fake.date_time_this_decade(before_now=True, after_now=True, tzinfo=_get_tzinfo())
     acronym = factory.Sequence(lambda n: 'LUY-%d' % n)
     title = factory.Sequence(lambda n: 'Learning unit year - %d' % n)

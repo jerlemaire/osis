@@ -29,11 +29,9 @@ import string
 import datetime
 import operator
 from base.enums import learning_unit_periodicity
-from base.tests.factories.academic_year import AcademicYearFakerFactory
 from django.conf import settings
 from django.utils import timezone
 from factory.django import DjangoModelFactory
-from faker.providers import BaseProvider
 from faker import Faker
 fake = Faker()
 
