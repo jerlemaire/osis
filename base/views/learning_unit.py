@@ -48,15 +48,16 @@ def learning_units_search(request):
     form = LearningUnitsForm(request.GET)
     if form.is_valid():
         learning_units = form.get_learning_units()
-        is_learning_unit_create_ok=form.check_learning_unit_create()
+        if learning_units:
+            is_learning_unit_create_ok=False
+        else:
+            is_learning_unit_create_ok=form.check_learning_unit_create(request)
     else:
         learning_units = None
         is_learning_unit_create_ok=False
 
     academic_year_selected_before_search = form.get_academic_year()
     academic_years_all=form.set_academic_years_all()
-    print('create_is_ok: '+str(is_learning_unit_create_ok))
-    print(str(learning_units))
 
     return layout.render(request, "learning_units.html", {'academic_year': int(academic_year_selected_before_search),
                                                           'academic_years': academic_years,
@@ -65,19 +66,6 @@ def learning_units_search(request):
                                                           'is_learning_unit_create_ok': is_learning_unit_create_ok,
                                                           'form':form,
                                                           'init': "0"})
-
-@login_required
-@permission_required('base.can_access_learningunit', raise_exception=True)
-def learning_unit_read(request, learning_unit_year_id):
-    learning_unit_year = mdl.learning_unit_year.find_by_id(learning_unit_year_id)
-    attributions = mdl_attr.attribution.search(learning_unit_year=learning_unit_year)
-    enrollments = mdl.learning_unit_enrollment.find_by_learningunit_enrollment(learning_unit_year)
-    is_program_manager = mdl.program_manager.is_program_manager(request.user)
-
-    return layout.render(request, "learning_unit.html", {'learning_unit_year': learning_unit_year,
-                                                         'attributions': attributions,
-                                                         'enrollments': enrollments,
-                                                         'is_program_manager': is_program_manager})
 
 
 @login_required
@@ -100,3 +88,16 @@ def learning_unit_create(request, academic_year_id):
     return layout.render(request, "learning_unit_create.html", {
                                                           'form':form,
                                                           })
+
+@login_required
+@permission_required('base.can_access_learningunit', raise_exception=True)
+def learning_unit_read(request, learning_unit_year_id):
+    learning_unit_year = mdl.learning_unit_year.find_by_id(learning_unit_year_id)
+    attributions = mdl_attr.attribution.search(learning_unit_year=learning_unit_year)
+    enrollments = mdl.learning_unit_enrollment.find_by_learningunit_enrollment(learning_unit_year)
+    is_program_manager = mdl.program_manager.is_program_manager(request.user)
+
+    return layout.render(request, "learning_unit.html", {'learning_unit_year': learning_unit_year,
+                                                         'attributions': attributions,
+                                                         'enrollments': enrollments,
+                                                         'is_program_manager': is_program_manager})

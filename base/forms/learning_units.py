@@ -79,7 +79,7 @@ class LearningUnitsForm(forms.Form):
         academic_year = 0 if not self.cleaned_data.get('academic_year') else self.cleaned_data.get('academic_year')
         return academic_year
 
-    def check_learning_unit_create(self):
+    def check_learning_unit_create(self,request):
         clean_data=self.cleaned_data
         academic_year = clean_data.get('academic_year')
         acronym = clean_data.get('acronym').upper()
@@ -90,7 +90,8 @@ class LearningUnitsForm(forms.Form):
             academic_year=mdl.academic_year.find_academic_year_by_id(int(academic_year)).year
             academic_year_relative = get_academic_year_relative(int(academic_year))
             if academic_year_relative>=timezone.now().year and not keyword:
-                learning_unit_create=get_learning_units_with_acronym(acronym)
+                learning_unit_create=True
+                self.set_request_session(request)
             else:
                 learning_unit_create=False
         return learning_unit_create
@@ -106,29 +107,12 @@ class LearningUnitsForm(forms.Form):
 
 def check_when_academic_year_is_all(acronym):
     if acronym:
-        learning_units = check_learning_units_with_acronym(acronym)
+        learning_units = mdl.learning_unit_year.find_by_acronym(acronym)
+        if not learning_units:
+            raise ValidationError('LU_ERRORS_YEAR_WITH_ACRONYM')
         return learning_units
-    elif not acronym:
-        raise ValidationError('LU_ERRORS_ACADEMIC_YEAR_REQUIRED')
-
-def check_learning_units_with_acronym(acronym):
-
-    learning_units = mdl.learning_unit_year.find_by_acronym(acronym)
-
-    if not learning_units:
-        raise ValidationError('LU_ERRORS_YEAR_WITH_ACRONYM')
-
-    return learning_units
-
-
-def get_learning_units_with_acronym(acronym):
-    learning_units=mdl.learning_unit_year.find_by_acronym(acronym)
-    if not learning_units:
-        learning_unit_create=True
     else:
-        learning_unit_create=False
-    return learning_unit_create
-
+        raise ValidationError('LU_ERRORS_ACADEMIC_YEAR_REQUIRED')
 
 def get_academic_year_relative(academic_year):
     year = timezone.now().year

@@ -1419,13 +1419,6 @@ msgstr "avec travaux pratiques"
 msgid "LU_WITHOUT_PC"
 msgstr "sans travaux pratiques"
 
-msgid "ANNUAL"
-msgstr "Annuel"
-msgid "BIENNIAL_EVEN"
-msgstr "Bisannuel pair"
-msgid "BIENNIAL_ODD"
-msgstr "Bisannuel impair"
-
 msgid "no_valid_m_justification_error"
 msgstr "Vous ne pouvez pas encoder d'absence justifiée (M) via l'injection xls"
 
