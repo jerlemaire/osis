@@ -49,7 +49,6 @@ class LearningUnitsSearchTest(StaticLiveServerTestCase):
                                 password='superpassword')
 
     def error_displayed(self,error_msg):
-        #self.wait_for(lambda: self.assertEqual(_(error_msg), self.browser.find_element_by_class_name('error').text))
         self.wait_for(lambda: self.browser.find_element_by_class_name('error').is_displayed())
 
     def go_to_learning_units_page(self):

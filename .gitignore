@@ -17,4 +17,8 @@ backoffice/server_settings.py
 *.mo
 /uploads/
 .env
+<<<<<<< HEAD
 geckodriver.log
+=======
+ghostdriver.log
+>>>>>>> ea7651469e12441b481ed6e8b2b3f638a102f172
