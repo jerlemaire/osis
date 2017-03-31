@@ -28,7 +28,6 @@ from base import models as mdl
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from base.enums import learning_unit_year_types
-from base.enums import learning_units_errors
 
 class LearningUnitCreateForm(forms.Form):
 
@@ -47,7 +46,7 @@ class LearningUnitCreateForm(forms.Form):
     def clean(self):
         clean_data=self.cleaned_data
         if (not clean_data):
-            raise ValidationError(learning_units_errors.INVALID)
+            raise ValidationError('INVALID')
         return clean_data
 
 
@@ -67,7 +66,7 @@ def get_academic_year_relative(academic_year):
 def check_learning_units_with_acronym(acronym):
     learning_units=mdl.learning_unit_year.find_by_acronym(acronym)
     if not learning_units:
-        raise ValidationError(learning_units_errors.ACADEMIC_YEAR_WITH_ACRONYM)
+        raise ValidationError('ACADEMIC_YEAR_WITH_ACRONYM')
 
 def get_learning_units_with_acronym(acronym):
     learning_units=mdl.learning_unit_year.find_by_acronym(acronym)

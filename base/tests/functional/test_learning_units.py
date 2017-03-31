@@ -202,3 +202,27 @@ class LearningUnitsSearchTest(StaticLiveServerTestCase):
         self.error_displayed('LU_ERRORS_INVALID_SEARCH')
 
         # Unhappy of the situation, she closes the browser...
+
+    def test_error_when_search_has_academic_year_and_acronym_valid_only(self):
+        # Sarah needs to check out an existing learning_unit
+        self.go_learning_units_page()
+
+        # She specifies an academic year and an acronym,
+        # to see if a learning unit exists in a particular year.
+        #academic_year = Select(self.browser.find_element_by_id('slt_academic_year'))
+        #print ([ay.text for ay in academic_year.options])
+        #academic_year.select_by_visible_text('2016-2017')
+
+        # She enters a valid acronym only,
+        # to see if a learning unit exists in a particular year.
+        #inputbox_acronym=self.browser.find_element_by_id('id_acronym')
+        #inputbox_acronym.send_keys('ESPO1234')
+
+        # She starts a search by pressing ENTER
+        #login_button= self.browser.find_element_by_id('bt_submit_learning_unit_search')
+        #login_button.send_keys(Keys.ENTER)
+
+        # She sees a message "no result found" when the page refreshes
+        #
+
+        # Ho, she can add a new acronym based on the information she gave before
