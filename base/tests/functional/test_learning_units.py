@@ -26,6 +26,7 @@
 
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import WebDriverException
@@ -33,6 +34,7 @@ from base.tests.factories.academic_year import AcademicYearFakerFactory
 from base.tests.factories.learning_unit_year import LearningUnitYearFakerFactory
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+import datetime
 import time
 
 MAX_WAIT = 10
@@ -203,26 +205,28 @@ class LearningUnitsSearchTest(StaticLiveServerTestCase):
 
         # Unhappy of the situation, she closes the browser...
 
-    def test_error_when_search_has_academic_year_and_acronym_valid_only(self):
+    def test_can_access_to_add_learning_unit_when_search_has_academic_year_and_acronym_valid_only(self):
         # Sarah needs to check out an existing learning_unit
-        self.go_learning_units_page()
+        ## First, lets plant some seeds..
+        academic_year_seed = AcademicYearFakerFactory(start_date=timezone.now().date(), end_date=datetime.date(timezone.now().year+1,12,30))
+        learning_unit_year_seed = LearningUnitYearFakerFactory(academic_year=academic_year_seed) ## Saved in database
+        #learning_unit_year_seed_build = LearningUnitYearFakerFactory.build() ## Not saved in database
 
-        # She specifies an academic year and an acronym,
+        # Sarah needs to check out an existing learning_unit
+        self.go_to_learning_units_page()
+
+        # She enters an acronym,
         # to see if a learning unit exists in a particular year.
-        #academic_year = Select(self.browser.find_element_by_id('slt_academic_year'))
-        #print ([ay.text for ay in academic_year.options])
-        #academic_year.select_by_visible_text('2016-2017')
+        inputbox_acronym=self.browser.find_element_by_id('id_acronym')
+        inputbox_acronym.send_keys('LUY-ToBeCreated')
+        academic_year = Select(self.browser.find_element_by_id('slt_academic_year'))
+        academic_year.select_by_visible_text(academic_year_seed.name)
 
-        # She enters a valid acronym only,
-        # to see if a learning unit exists in a particular year.
-        #inputbox_acronym=self.browser.find_element_by_id('id_acronym')
-        #inputbox_acronym.send_keys('ESPO1234')
+        # Then she start the search
+        login_button= self.browser.find_element_by_id('bt_submit_learning_unit_search')
+        login_button.send_keys(Keys.ENTER)
 
-        # She starts a search by pressing ENTER
-        #login_button= self.browser.find_element_by_id('bt_submit_learning_unit_search')
-        #login_button.send_keys(Keys.ENTER)
-
-        # She sees a message "no result found" when the page refreshes
-        #
-
-        # Ho, she can add a new acronym based on the information she gave before
+        # She can see now the response returned by the application and
+        # she sees she can add a new learning unit if she wants to
+        self.wait_for(lambda: self.browser.find_element_by_id('lnk_learning_unit_create').is_displayed())
+        # Satisfied, she logs out.

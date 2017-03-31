@@ -84,14 +84,12 @@ class LearningUnitsForm(forms.Form):
         academic_year = clean_data.get('academic_year')
         acronym = clean_data.get('acronym').upper()
         keyword = clean_data.get('keyword')
-        status = clean_data.get('status')
-        type = clean_data.get('type')
-        if academic_year=="0" or not acronym:
+        if not academic_year or not acronym:
             learning_unit_create=False
         else:
             academic_year=mdl.academic_year.find_academic_year_by_id(int(academic_year)).year
             academic_year_relative = get_academic_year_relative(int(academic_year))
-            if academic_year_relative>=timezone.now().year and not keyword and status=="NONE" and type=="NONE":
+            if academic_year_relative>=timezone.now().year and not keyword:
                 learning_unit_create=get_learning_units_with_acronym(acronym)
             else:
                 learning_unit_create=False
@@ -112,8 +110,6 @@ def check_when_academic_year_is_all(acronym):
         return learning_units
     elif not acronym:
         raise ValidationError('LU_ERRORS_ACADEMIC_YEAR_REQUIRED')
-
-
 
 def check_learning_units_with_acronym(acronym):
 

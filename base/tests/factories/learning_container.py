@@ -28,11 +28,13 @@ import factory.fuzzy
 from django.conf import settings
 from django.utils import timezone
 
+
 def _get_tzinfo():
     if settings.USE_TZ:
         return timezone.get_current_timezone()
     else:
         return None
+
 
 class LearningContainerFactory(factory.django.DjangoModelFactory):
     class Meta:

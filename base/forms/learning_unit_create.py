@@ -29,6 +29,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from base.enums import learning_unit_year_types
 
+
 class LearningUnitCreateForm(forms.Form):
 
     academic_year=forms.CharField(widget=forms.TextInput(attrs={'size':'10'}),max_length=4, required=True)
@@ -63,10 +64,12 @@ def get_academic_year_relative(academic_year):
         academic_year_relative=academic_year
     return academic_year_relative
 
+
 def check_learning_units_with_acronym(acronym):
     learning_units=mdl.learning_unit_year.find_by_acronym(acronym)
     if not learning_units:
         raise ValidationError('ACADEMIC_YEAR_WITH_ACRONYM')
+
 
 def get_learning_units_with_acronym(acronym):
     learning_units=mdl.learning_unit_year.find_by_acronym(acronym)
