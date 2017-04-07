@@ -40,12 +40,12 @@ from internship.views.internship import (get_all_organizations,
                                          set_student_choices_list,
                                          set_tabs_name, sort_internships)
 
+from internship.forms.internship_offer import InternshipOfferImportForm
+
 
 @login_required
 @permission_required('internship.is_internship_manager', raise_exception=True)
 def internships(request, cohort_id):
-    # import ipdb
-    # ipdb.set_trace()
     cohort = get_object_or_404(Cohort, pk=cohort_id)
 
     # First get the value of the option's value for the sort
@@ -94,6 +94,7 @@ def internships(request, cohort_id):
         'speciality_sort_value': speciality_sort_value,
         'non_mandatory_speciality': all_non_mandatory_speciality,
         'cohort': cohort,
+        'form': InternshipOfferImportForm(),
     }
     return render(request, "internships.html", context)
 

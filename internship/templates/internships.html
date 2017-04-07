@@ -216,6 +216,8 @@
                             <h4 class="modal-title" id="uploadScroresLabel">{% trans 'internships_injection' %}</h4>
                         </div>
                         <div class="modal-body">
+                            <p class="help-block">{% trans 'select_an_internship' %}</p>
+                            {{ form.internship }}
                             <label for="fle_scores_input_file" class="btn btn-default" >{% trans 'choose_file' %}</label>
                             <input type="file" id="fle_scores_input_file" name="file" style="display:none" />
                             <div id="pnl_selectedFiles"></div>

@@ -34,6 +34,11 @@ from django.views.decorators.http import require_http_methods
 
 from internship import models as mdl
 from internship.models.cohort import Cohort
+from internship.models.internship_offer import InternshipOffer
+from internship.models.internship_speciality import InternshipSpeciality
+from internship.models.organization import Organization
+from internship.models.period import Period
+from internship.models.period_internship_places import PeriodInternshipPlaces
 
 
 @require_http_methods(['POST'])
@@ -156,95 +161,85 @@ def _is_registration_id(registration_id):
         return False
 
 
+@require_http_methods(['POST'])
 @login_required
-def upload_internships_file(request):
-    if request.method == 'POST':
-        file_name = request.FILES['file']
-        if file_name is not None:
-            if ".xls" not in str(file_name):
-                messages.add_message(request, messages.ERROR, _('file_must_be_xls'))
-            else:
-                __save_xls_internships(request, file_name, request.user)
+@permission_required('internship.is_internship_manager', raise_exception=True)
+def upload_internships_file(request, cohort_id):
+    cohort = get_object_or_404(Cohort, pk=cohort_id)
+    file_name = request.FILES['file']
+    if file_name is not None:
+        if ".xls" not in str(file_name):
+            messages.add_message(request, messages.ERROR, _('file_must_be_xls'))
+        else:
+            save_xls_internships(file_name, cohort)
+            # __save_xls_internships(request, file_name, request.user)
 
-    return HttpResponseRedirect(reverse('internships'))
+    return HttpResponseRedirect(reverse('internships', kwargs={
+        'cohort_id': cohort.id,
+    }))
 
 
-def __save_xls_internships(request, file_name, user):
-    workbook = openpyxl.load_workbook(file_name, read_only=True)
+def save_xls_internships(filename, cohort):
+    workbook = openpyxl.load_workbook(filename, read_only=True)
     worksheet = workbook.active
-    col_reference = 0
-    col_spec = 1
-    col_master = 2
-    # Iterates over the lines of the spreadsheet.
-    for count, row in enumerate(worksheet.rows):
-        if row[col_reference].value is None \
-                or row[col_reference].value == 0 \
-                or not _is_registration_id(row[col_reference].value):
+
+    col_reference, col_spec, col_master = range(0, 3)
+
+    def validated_rows(iterable):
+        for row in iterable:
+            reference = row[col_reference].value
+            if reference and _is_registration_id(reference):
+                if row[col_spec].value is not None:
+                    yield row
+
+    for row in validated_rows(worksheet.rows):
+        reference = '%02d' % row[col_reference].value
+        organization = Organization.objects.filter(cohort=cohort, reference=reference).first()
+        if organization is None:
             continue
 
-        if row[col_spec].value is not None:
-            check_internship = 0
-            if row[col_reference].value:
-                reference = ""
-                if int(row[col_reference].value) < 10:
-                    reference = "0"+str(row[col_reference].value)
-                else :
-                    reference = str(row[col_reference].value)
-                organization = mdl.organization.search(reference=reference)
-                # internship.organization = organization[0]
+        spec_value = row[col_spec].value.replace(' ', '').replace('*', '')
+        master_value = row[col_master].value
 
-            if len(organization) > 0:
+        specialities = InternshipSpeciality.objects.filter(cohort=cohort, acronym__icontains=spec_value)
 
-                spec_value = row[col_spec].value
-                spec_value = spec_value.replace(" ", "")
-                spec_value = spec_value.replace("*", "")
+        number_places = sum(int(row[x].value) for x in range(3, 7) if row[x].value)
 
-                master_value = row[col_master].value
+        for speciality in specialities:
+            parameters = {
+                'cohort': cohort,
+                'speciality': speciality,
+                'organization': organization,
+            }
+            tmp_offer = InternshipOffer.objects.filter(**parameters).first()
 
-                speciality = mdl.internship_speciality.search(acronym__icontains=spec_value)
+            offer = tmp_offer if tmp_offer else InternshipOffer(**parameters)
 
-                number_place = 0
-                for x in range(3, 7):
-                    if row[x].value is None:
-                        number_place += 0
-                    else:
-                        number_place += int(row[x].value)
+            offer.title = speciality.name
+            offer.maximum_enrollments = number_places
+            offer.master = master_value
+            offer.selectable = True
+            offer.save()
 
-                for x in range(0, len(speciality)):
-                    check_internship = mdl.internship_offer.search(speciality__name=speciality[x],
-                                                                   organization__reference=organization[0].reference)
-                    if len(check_internship) != 0:
-                        internship = mdl.internship_offer.find_intership_by_id(check_internship[0].id)
-                    else:
-                        internship = mdl.internship_offer.InternshipOffer()
+            number_of_periods = 9
+            for x in range(3, 7):
+                period_name = 'P%d' % (number_of_periods)
+                number_of_periods += 1
 
-                    internship.organization = organization[0]
-                    internship.speciality = speciality[x]
-                    internship.title = speciality[x].name
-                    internship.maximum_enrollments = number_place
-                    internship.master = master_value
-                    internship.selectable = True
-                    internship.save()
+                period = Period.objects.filter(cohort=cohort, name=period_name).first()
 
-                    number_period = 9
-                    for x in range(3, 7):
-                        period_search = "P"+str(number_period)
-                        number_period += 1
-                        period = mdl.period.search(name=period_search)
-                        check_relation = mdl.period_internship_places.search(period=period, internship=internship)
+                relation = PeriodInternshipPlaces.objects.filter(period=period, internship_offer=offer).first()
 
-                        if len(check_relation) != 0:
-                            relation = mdl.period_internship_places.find_by_id(check_relation[0].id)
-                        else:
-                            relation = mdl.period_internship_places.PeriodInternshipPlaces()
+                if not relation:
+                    relation = PeriodInternshipPlaces()
 
-                        relation.period = period[0]
-                        relation.internship = internship
-                        if row[x].value is None:
-                            relation.number_places = 0
-                        else:
-                            relation.number_places = int(row[x].value)
-                        relation.save()
+                relation.period = period
+                relation.internship_offer = offer
+
+                value = row[x].value
+                relation.number_places = 0 if value is None else int(value)
+
+                relation.save()
 
 
 @require_http_methods(['POST'])

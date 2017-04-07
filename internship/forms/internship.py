@@ -45,3 +45,5 @@ class InternshipForm(forms.ModelForm):
             self.fields[field].widget.attrs.update({
                 'class': 'form-control'
             })
+
+
