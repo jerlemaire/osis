@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% load staticfiles %}
 {% load i18n %}
+{% load format %}
 
 {% comment "License" %}
  * OSIS stands for Open Student Information System. It's an application
@@ -53,14 +54,14 @@
                     <label for="txt_start_visibility_proposition" {% if form.start_visibility_proposition.errors %}
                            style="color:red;" {% endif %}>{% trans 'from'%}</label>
                     <input type="text" class="form-control"
-                           value="{{ form.start_visibility_proposition.value|date:'d/m/Y' }}"
+                           value="{{ form.start_visibility_proposition.value|date_in_form_format:'d/m/Y' }}"
                            name="start_visibility_proposition" id="txt_start_visibility_proposition">
                 </div>
                 <div class="col-md-6 form-group">
                     <label for="txt_end_visibility_proposition" {% if form.end_visibility_proposition.errors %}
                            style="color:red;" {% endif %}>{% trans 'to' %}</label>
                     <input type="text" class="form-control"
-                           value="{{ form.end_visibility_proposition.value|date:'d/m/Y' }}"
+                           value="{{ form.end_visibility_proposition.value|date_in_form_format:'d/m/Y' }}"
                            name="end_visibility_proposition" id="txt_end_visibility_proposition">
                 </div>
             </div>
@@ -70,14 +71,14 @@
                     <label for="txt_start_visibility_dissertation" {% if form.start_visibility_dissertation.errors %}
                            style="color:red;" {% endif %}>{% trans 'from'%}</label>
                     <input type="text" class="form-control"
-                           value="{{ form.start_visibility_dissertation.value|date:'d/m/Y' }}"
+                           value="{{ form.start_visibility_dissertation.value|date_in_form_format:'d/m/Y' }}"
                            name="start_visibility_dissertation" id="txt_start_visibility_dissertation">
                 </div>
                 <div class="col-md-6 form-group">
                     <label for="txt_end_visibility_dissertation" {% if form.end_visibility_dissertation.errors %}
                            style="color:red;" {% endif %}>{% trans 'to' %}</label>
                     <input type="text" class="form-control"
-                           value="{{ form.end_visibility_dissertation.value|date:'d/m/Y' }}"
+                           value="{{ form.end_visibility_dissertation.value|date_in_form_format:'d/m/Y' }}"
                            name="end_visibility_dissertation" id="txt_end_visibility_dissertation">
                 </div>
             </div>
@@ -87,14 +88,14 @@
                     <label for="txt_start_jury_visibility" {% if form.start_jury_visibility.errors %}
                            style="color:red;" {% endif %}>{% trans 'from'%}</label>
                     <input type="text" class="form-control"
-                           value="{{ form.start_jury_visibility.value|date:'d/m/Y' }}"
+                           value="{{ form.start_jury_visibility.value|date_in_form_format:'d/m/Y' }}"
                            name="start_jury_visibility" id="txt_start_jury_visibility">
                 </div>
                 <div class="col-md-6 form-group">
                     <label for="txt_end_jury_visibility" {% if form.end_jury_visibility.errors %}
                            style="color:red;" {% endif %}>{% trans 'to' %}</label>
                     <input type="text" class="form-control"
-                           value="{{ form.end_jury_visibility.value|date:'d/m/Y' }}"
+                           value="{{ form.end_jury_visibility.value|date_in_form_format:'d/m/Y' }}"
                            name="end_jury_visibility" id="txt_end_jury_visibility">
                 </div>
             </div>
@@ -104,14 +105,14 @@
                     <label for="txt_start_edit_title" {% if form.start_edit_title.errors %}
                            style="color:red;" {% endif %}>{% trans 'from'%}</label>
                     <input type="text" class="form-control"
-                           value="{{ form.start_edit_title.value|date:'d/m/Y' }}"
+                           value="{{ form.start_edit_title.value|date_in_form_format:'d/m/Y' }}"
                            name="start_edit_title" id="txt_start_edit_title">
                 </div>
                 <div class="col-md-6 form-group">
                     <label for="txt_end_edit_title" {% if form.end_edit_title.errors %}
                            style="color:red;" {% endif %}>{% trans 'to' %}</label>
                     <input type="text" class="form-control"
-                           value="{{ form.end_edit_title.value|date:'d/m/Y' }}"
+                           value="{{ form.end_edit_title.value|date_in_form_format:'d/m/Y' }}"
                            name="end_edit_title" id="txt_end_edit_title">
                 </div>
             </div>
