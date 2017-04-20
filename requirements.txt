@@ -1,6 +1,6 @@
 coverage
-Django==1.9
-django-jenkins==0.18.1
+Django==1.11
+django-jenkins
 et-xmlfile==1.0.1
 jdcal==1.2
 pika==0.10.0
@@ -9,9 +9,9 @@ Pillow==3.1.0
 psycopg2==2.6.2
 reportlab==3.2.0
 selenium==2.53.2
-django-analytical==2.2.2
-django-localflavor==1.3
-django-statici18n==1.1.5
+django-analytical
+django-localflavor
+django-statici18n
 factory_boy
 django-dotenv==1.4.1
 pendulum
