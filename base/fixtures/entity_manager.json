@@ -1,0 +1,11 @@
+[
+  {
+    "model": "base.entity_manager",
+    "fields": {
+      "person": "",
+      "start_date": "2015-09-15",
+      "end_date": "2016-09-14"
+    }
+  },
+
+]
