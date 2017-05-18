@@ -45,7 +45,7 @@
       <form  method="get" action="{% url 'academic_calendars_search'%}" >
         <div class="col-md-2">
           <label for="slt_academic_year" >{% trans 'academic_year'%}</label>
-          <select class="form-control" id="slt_academic_year"  name="academic_year" value="{{ academic_year }}">
+          <select class="form-control" id="slt_academic_year"  name="academic_year">
             {% for v in academic_years %}
               {% if v.id == academic_year %}
                 <option selected value="{{ v.id }}">{{ v }}</option>
@@ -74,17 +74,21 @@
     {% if academic_calendars|length > 0%}
     <table class="table table-striped table-hover">
       <thead>
-        <th>{% trans 'title'%}</th>
-        <th>{% trans 'start_date'%}</th>
-        <th>{% trans 'end_date'%}</th>
-      </thead>
-      {% for academic_calendar in academic_calendars %}
         <tr>
-          <td><a href="{% url 'academic_calendar_read' academic_calendar_id=academic_calendar.id %}" id="lnk_academic_calendar_edit_{{academic_calendar.id}}">{% trans academic_calendar.title %}</a></td>
-          <td>{{academic_calendar.start_date| default_if_none:''|date_in_form_format }}</td>
-          <td>{{academic_calendar.end_date| default_if_none:''|date_in_form_format }}</td>
+          <th>{% trans 'title'%}</th>
+          <th>{% trans 'start_date'%}</th>
+          <th>{% trans 'end_date'%}</th>
         </tr>
-      {% endfor %}
+      </thead>
+      <tbody>
+        {% for academic_calendar in academic_calendars %}
+          <tr>
+            <td><a href="{% url 'academic_calendar_read' academic_calendar_id=academic_calendar.id %}" id="lnk_academic_calendar_edit_{{academic_calendar.id}}">{% trans academic_calendar.title %}</a></td>
+            <td>{{academic_calendar.start_date| default_if_none:''|date_in_form_format }}</td>
+            <td>{{academic_calendar.end_date| default_if_none:''|date_in_form_format }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
     {% endif %}
 

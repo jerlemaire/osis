@@ -50,3 +50,8 @@ input[type=number] {
 #pnl_add_manager_modal .modal-dialog  {
     width:90%;
 }
+
+/* Breadcrumb */
+.breadcrumb li.pull-right:before{
+  content: "";
+}

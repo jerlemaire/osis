@@ -105,8 +105,6 @@ function check_browser(){
     var accepted = false;
     if (browser.name in browser_supported_versions){
         var accepted_version = browser_supported_versions[browser.name];
-        console.log(accepted_version);
-        console.log(browser.version);
         if (browser.version >= accepted_version) {
             accepted = true;
         }

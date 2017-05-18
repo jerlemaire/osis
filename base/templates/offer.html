@@ -459,7 +459,7 @@
                 email: $("#txt_score_encoding_email").val()
             },
             function(data, status) {
-                console.log("Data: " + data + "\nStatus: " + status);
+                //console.log("Data: " + data + "\nStatus: " + status);
                 $('#bt_save_score_encoding_address').prop('disabled', false);
                 $('#status_save').text('{% trans 'saved' %}').css('color', 'green').fadeOut(2000);
             });

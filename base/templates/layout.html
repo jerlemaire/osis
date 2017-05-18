@@ -45,7 +45,7 @@
     <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.min.css' %}">
     {% block header %}
     <noscript>
-      <meta http-equiv="refresh" content="0;url={% url 'noscript' %}">
+      <meta http-equiv="refresh" content="0; url={% url 'noscript' %}">
     </noscript>
     {% endblock %}
     {% block style %}
@@ -74,7 +74,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="{% url 'home' %}" id="lnk_home"><img
-                        src="{% static 'img/logo_osis.png' %}" style="margin-top: -10px;"></a>
+                        src="{% static 'img/logo_osis.png' %}" alt="osis" style="margin-top: -10px;"></a>
             </div>
 
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -137,7 +137,7 @@
                                 {% endif %}
                                 {% if perms.base.is_entity_manager %}
                                 <li><a href="{% url 'academic_actors' %}"
-                                       id="lnk_dropdown_academic actors">{% trans 'academic_actors' %}</a></li>
+                                       id="lnk_dropdown_academic_actors">{% trans 'academic_actors' %}</a></li>
                                 {% endif %}
                             </ul>
                         </li>
@@ -203,11 +203,11 @@
                                                                             aria-hidden="true"></span></a></li>
                     {% block breadcrumb %}
                     {% endblock %}
-                    <a href="http://uclouvain.github.io/osis/assets/user_manual_fr.pdf"
+                    <li class="pull-right"><a href="http://uclouvain.github.io/osis/assets/user_manual_fr.pdf"
                        target="help" id="lnk_user_manual_section"><span
                             class="glyphicon glyphicon-question-sign pull-right"
                             style="font-size: 14pt; color: green"
-                            aria-hidden="true"></span></a>
+                            aria-hidden="true"></span></a></li>
                 </ol>
             {% endblock %}
         {% endif %}
