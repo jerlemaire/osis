@@ -1,4 +1,3 @@
-{% extends "layout.html" %}
 {% load staticfiles %}
 {% load i18n %}
 {% comment "License" %}
@@ -24,35 +23,3 @@
 * at the root of the source code of this program.  If not,
 * see http://www.gnu.org/licenses/.
 {% endcomment %}
-
-{% block breadcrumb %}
-{% include "learning_unit/breadcrumb.html" %}
-{% endblock %}
-
-{% block content %}
-
-{% include "learning_unit/header.html" %}
-
-<div class="panel panel-default" >
-    <div class="panel-body" id="tabs" >
-        {% include "learning_unit/tabs.html" %}
-
-        <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="identification">
-                <br/>
-                <div class="row">
-                    <div class="col-md-8">
-                        {% include "learning_unit/identification_general.html" %}
-                    </div>
-
-                    <div class="col-md-4">
-                        {% if learning_unit_year.learning_container_year.container_type != 'INTERNSHIP'%}
-                            {% include "learning_unit/identification_institution.html" %}
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}

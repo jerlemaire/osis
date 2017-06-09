@@ -1,0 +1,120 @@
+{% load staticfiles %}
+{% load i18n %}
+{% comment "License" %}
+* OSIS stands for Open Student Information System. It's an application
+* designed to manage the core business of higher education institutions,
+* such as universities, faculties, institutes and professional schools.
+* The core business involves the administration of students, teachers,
+* courses, programs and so on.
+*
+* Copyright (C) 2015-2017 Université catholique de Louvain (http://www.uclouvain.be)
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* A copy of this license - GNU General Public License - is available
+* at the root of the source code of this program.  If not,
+* see http://www.gnu.org/licenses/.
+{% endcomment %}
+
+<div class="row">
+   <div class="col-md-3">
+      <label>{% trans 'code'%}</label><br>
+      {{ learning_unit_year.acronym }}
+   </div>
+   {% if learning_unit_year.learning_container_year.container_type != 'OTHER_COLLECTIVE' and learning_unit_year.learning_container_year.container_type != 'MASTER_THESIS'%}
+       <div class="col-md-3">
+          <label>{% trans 'partims' %}</label><br>
+          <div>
+             {% for partim in learning_container_year_partims %}
+                 {% if forloop.counter > 1 %}
+                 ,
+                 {% endif%}
+                 <a href="{% url 'learning_unit' partim.id %}">{{ partim.subdivision}}</a>
+             {% endfor %}
+          </div>
+        </div>
+   {% endif %}
+   <div class="col-md-3">
+      <label>{% trans 'type' %}</label><br>
+      {% if learning_unit_year.learning_container_year.container_type %}
+        {% trans learning_unit_year.learning_container_year.container_type %}
+      {% endif %}
+   </div>
+   {% if show_subtype %}
+       <div class="col-md-3">
+            <label>{% trans 'subtype' %}</label><br>
+            {% if learning_unit_year.subtype %}
+                {% trans learning_unit_year.subtype %}
+            {% endif %}
+       </div>
+   {% endif %}
+   <div class="col-md-3">
+      <label>{% trans 'nominal_credits' %}</label><br>
+      {{ learning_unit_year.credits }}
+   </div>
+   {% if learning_unit_year.learning_container_year.container_type != 'OTHER_COLLECTIVE' and learning_unit_year.learning_container_year.container_type != 'MASTER_THESIS'%}
+       <div class="col-md-3">
+          <label>{% trans 'periodicity' %}</label><br>
+          {% if learning_unit_year.learning_unit.periodicity %}
+            {% trans learning_unit_year.learning_unit.periodicity %}
+          {% endif %}
+       </div>
+   {% endif %}
+   <div class="col-md-3">
+      <label>{% trans 'status' %}</label><br>
+      {% if learning_unit_year.activity_status %}
+        {% trans learning_unit_year.activity_status %}
+      {% endif %}
+   </div>
+</div>
+
+<div class="row" style="margin-top:20px;">
+    <div class="col-md-12">
+        <label>{% trans 'title_official_1' %}</label><br>
+        {{ learning_unit_year.learning_container_year.title | default_if_none:'' }}
+    </div>
+</div>
+
+{% if learning_unit_year.learning_container_year.container_type != 'OTHER_COLLECTIVE' and learning_unit_year.learning_container_year.container_type != 'MASTER_THESIS'%}
+    <div class="row" style="margin-top:10px;">
+        <div class="col-md-12">
+            <label>{% trans 'title_official_2' %}</label><br>
+            {% if learning_unit_year.subtype == 'PARTIM'%}
+                {{learning_unit_year.title | default_if_none:''}}
+            {% endif%}
+        </div>
+    </div>
+{% endif %}
+
+<div class="row" style="margin-top:10px;">
+    <div class="col-md-12">
+        <label>{% trans 'title_in_english' %}{% trans 'title_in_english_1' %}</label><br>
+        {{learning_unit_year.learning_container_year.title_english | default_if_none:'' }}
+    </div>
+</div>
+
+{% if learning_unit_year.learning_container_year.container_type != 'OTHER_COLLECTIVE' and learning_unit_year.learning_container_year.container_type != 'MASTER_THESIS'%}
+    <div class="row" style="margin-top:10px;">
+        <div class="col-md-12">
+            <label>{% trans 'title_in_english' %}{% trans 'title_in_english_2' %}</label><br>
+            {% if learning_unit_year.subtype == 'PARTIM'%}
+                {{learning_unit_year.title_english | default_if_none:'' }}
+            {% endif%}
+        </div>
+    </div>
+{% endif %}
+
+<div class="row" style="margin-top:10px;">
+    <div class="col-md-12">
+        <label>{% trans 'language' %}</label><br>
+        {{learning_unit_year.learning_container_year.language | default_if_none:'' }}
+    </div>
+</div>

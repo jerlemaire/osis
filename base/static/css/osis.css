@@ -99,3 +99,7 @@
 .classes_background{
     background-color: #caeced;
 }
+
+[class*="col-"]:not(:last-child){
+  margin-bottom: 10px;
+}
