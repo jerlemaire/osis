@@ -29,7 +29,7 @@
       <label>{% trans 'code'%}</label><br>
       {{ learning_unit_year.acronym }}
    </div>
-   {% if learning_unit_year.learning_container_year.container_type != 'OTHER_COLLECTIVE' and learning_unit_year.learning_container_year.container_type != 'MASTER_THESIS'%}
+   {% if learning_unit_year.learning_container_year.container_type != 'OTHER_INDIVIDUAL' and learning_unit_year.learning_container_year.container_type != 'MASTER_THESIS'%}
        <div class="col-md-3">
           <label>{% trans 'partims' %}</label><br>
           <div>
@@ -60,7 +60,7 @@
       <label>{% trans 'nominal_credits' %}</label><br>
       {{ learning_unit_year.credits }}
    </div>
-   {% if learning_unit_year.learning_container_year.container_type != 'OTHER_COLLECTIVE' and learning_unit_year.learning_container_year.container_type != 'MASTER_THESIS'%}
+   {% if learning_unit_year.learning_container_year.container_type != 'OTHER_INDIVIDUAL' and learning_unit_year.learning_container_year.container_type != 'MASTER_THESIS'%}
        <div class="col-md-3">
           <label>{% trans 'periodicity' %}</label><br>
           {% if learning_unit_year.learning_unit.periodicity %}
@@ -83,7 +83,7 @@
     </div>
 </div>
 
-{% if learning_unit_year.learning_container_year.container_type != 'OTHER_COLLECTIVE' and learning_unit_year.learning_container_year.container_type != 'MASTER_THESIS'%}
+{% if learning_unit_year.learning_container_year.container_type != 'OTHER_INDIVIDUAL' and learning_unit_year.learning_container_year.container_type != 'MASTER_THESIS'%}
     <div class="row" style="margin-top:10px;">
         <div class="col-md-12">
             <label>{% trans 'title_official_2' %}</label><br>
@@ -101,7 +101,7 @@
     </div>
 </div>
 
-{% if learning_unit_year.learning_container_year.container_type != 'OTHER_COLLECTIVE' and learning_unit_year.learning_container_year.container_type != 'MASTER_THESIS'%}
+{% if learning_unit_year.learning_container_year.container_type != 'OTHER_INDIVIDUAL' and learning_unit_year.learning_container_year.container_type != 'MASTER_THESIS'%}
     <div class="row" style="margin-top:10px;">
         <div class="col-md-12">
             <label>{% trans 'title_in_english' %}{% trans 'title_in_english_2' %}</label><br>

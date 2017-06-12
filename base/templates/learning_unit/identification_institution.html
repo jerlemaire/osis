@@ -30,9 +30,11 @@
             {{ organization.name }}
          {% endif %}
         <br>
-        <label style="margin-top:10px;">{% trans 'campus'%}</label><br>
-         {% if campus %}
-            {{ campus.name }}
-         {% endif %}
+        {% if learning_unit_year.learning_container_year.container_type != 'INTERNSHIP' and learning_unit_year.learning_container_year.container_type != 'OTHER_INDIVIDUAL'%}
+            <label style="margin-top:10px;">{% trans 'campus'%}</label><br>
+             {% if campus %}
+                {{ campus.name }}
+             {% endif %}
+        {% endif %}
     </div>
 </div>
