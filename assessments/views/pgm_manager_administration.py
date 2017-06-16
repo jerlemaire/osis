@@ -23,7 +23,7 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required, permission_required
 from base import models as mdl
 from base.views import layout
 from django.http import HttpResponse
@@ -32,7 +32,6 @@ from rest_framework.renderers import JSONRenderer
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 import json
-from base.models.entity_manager import is_entity_manager
 
 
 ALL_OPTION_VALUE = "-"
@@ -153,7 +152,7 @@ def _filter_by_person(person, entity_list, academic_yr, an_offer_type):
 
 
 @login_required
-@user_passes_test(is_entity_manager)
+@permission_required('base.is_entity_manager', raise_exception=True)
 def delete_manager(request):
     pgms_to_be_removed = request.GET['pgms']  # offers_id are stock in inputbox in a list format (ex = "id1, id2")
     id_person_to_be_removed = request.GET['person']
@@ -175,7 +174,7 @@ def remove_program_mgr_from_offers(offers, person_to_be_removed):
 
 
 @login_required
-@user_passes_test(is_entity_manager)
+@permission_required('base.is_entity_manager', raise_exception=True)
 def person_list_search(request):
     fullname = request.GET['fullname']
     employees = None
@@ -186,7 +185,7 @@ def person_list_search(request):
 
 
 @login_required
-@user_passes_test(is_entity_manager)
+@permission_required('base.is_entity_manager', raise_exception=True)
 def create_manager(request):
 
     person_selected = get_filter_selected_person(request)

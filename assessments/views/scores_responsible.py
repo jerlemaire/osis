@@ -28,12 +28,16 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from attribution import models as mdl_attr
 from base import models as mdl_base
-from base.models.entity_manager import is_entity_manager
 from base.views import layout
 
 
+def is_faculty_admin(user):
+    entities_manager = mdl_base.entity_manager.find_entity_manager_by_user(user)
+    return entities_manager if entities_manager else False
+
+
 @login_required
-@user_passes_test(is_entity_manager)
+@user_passes_test(is_faculty_admin)
 def scores_responsible(request):
     entities_manager = mdl_base.entity_manager.find_by_user(request.user)
     academic_year = mdl_base.academic_year.current_academic_year()
@@ -43,7 +47,7 @@ def scores_responsible(request):
 
 
 @login_required
-@user_passes_test(is_entity_manager)
+@user_passes_test(is_faculty_admin)
 def scores_responsible_search(request):
     entities_manager = mdl_base.entity_manager.find_by_user(request.user)
     attributions = mdl_attr.attribution.find_all_distinct_parents(entities_manager)
@@ -83,7 +87,7 @@ def create_attributions_list(attributions):
 
 
 @login_required
-@user_passes_test(is_entity_manager)
+@user_passes_test(is_faculty_admin)
 def scores_responsible_management(request):
     entities_manager = mdl_base.entity_manager.find_by_user(request.user)
     learning_unit_year_id = request.GET.get('learning_unit_year').strip('learning_unit_year_')
@@ -106,7 +110,7 @@ def scores_responsible_management(request):
 
 
 @login_required
-@user_passes_test(is_entity_manager)
+@user_passes_test(is_faculty_admin)
 def scores_responsible_add(request, pk):
     if request.POST.get('action') == "add":
         a_learning_unit_year = mdl_base.learning_unit_year.find_by_id(pk)
