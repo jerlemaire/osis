@@ -40,19 +40,20 @@
             <div role="tabpanel" class="tab-pane active" id="components">
                 <table class="table">
                     <thead>
-                    <th>{% trans 'components'%}</th>
-                    <th>{% trans 'code'%}</th>
-                    <th>{% trans 'description'%}</th>
-                    <th>{% trans 'nominal_volume' %}</th>
-                    <th>{% trans 'nominal_quater' %}</th>
-                    <th>{% trans 'volume_partial'%}</th>
-                    <th>{% trans 'volume_remaining'%}</th>
-                    <th>{% trans 'planned_classrooms'%}</th>
-                    <th>{% trans 'real_classes'%}</th>
-                    <th>{% trans 'lu_usage'%}</th>
-                    {% if learning_unit_year.subdivision %}
-                        <th>{% trans 'used_by_partim'%}{{ learning_unit_year.subdivision }}</th>
-                    {% endif%}
+                        <th>{% trans 'components'%}</th>
+                        <th>{% trans 'code'%}</th>
+                        <th>{% trans 'description'%}</th>
+                        <th>{% trans 'nominal_volume' %}</th>
+                        <th>{% trans 'nominal_quater' %}</th>
+                        <th>{% trans 'volume_partial'%}</th>
+                        <th>{% trans 'volume_remaining'%}</th>
+                        <th>{% trans 'planned_classrooms'%}</th>
+                        <th>{% trans 'real_classes'%}</th>
+                        <th>{% trans 'lu_usage'%}</th>
+                        {% if learning_unit_year.subdivision %}
+                            <th>{% trans 'used_by_partim'%}{{ learning_unit_year.subdivision }}</th>
+                        {% endif%}
+                        <th></th>
                     </thead>
                     <tbody>
                     {% for component in components%}
@@ -85,6 +86,11 @@
                         {% if learning_unit_year.subdivision %}
                             <td>{{ component.learning_component_year |used_by_partim:learning_unit_year }}</td>
                         {% endif %}
+                        <td>
+                            <a href="#">
+                                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                            </a>
+                        </td>
                     </tr>
                     {% if component.classes %}
                     <tr>
