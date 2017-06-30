@@ -15,7 +15,7 @@
 #
 #    This program is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 #    GNU General Public License for more details.
 #
 #    A copy of this license - GNU General Public License - is available
@@ -23,38 +23,23 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django import template
-from base.models import learning_unit_component
-from django.utils.translation import ugettext_lazy as _
+from django.test import TestCase
+from assistant.tests.factories.assistant_mandate import AssistantMandateFactory
+from assistant.tests.factories.mandate_structure import MandateStructureFactory
+from base.tests.factories.structure import StructureFactory
+from base.models.enums import structure_type
+from assistant.models import mandate_structure
 
 
-register = template.Library()
+class TestMandateStructureFactory(TestCase):
 
+    def setUp(self):
+        self.assistant_mandate = AssistantMandateFactory()
+        self.structure = StructureFactory(type=structure_type.FACULTY)
+        self.mandate_structure = MandateStructureFactory(assistant_mandate=self.assistant_mandate,
+                                                         structure=self.structure)
 
-@register.filter
-def get_css_class(planned_classes, real_classes):
-    planned_classes_int = 0
-    real_classes_int = 0
-
-    if planned_classes:
-        planned_classes_int = planned_classes
-
-    if real_classes:
-        real_classes_int = real_classes
-
-    if planned_classes_int == real_classes_int:
-        return "success-color"
-    else:
-        if planned_classes_int - real_classes_int == 1:
-            return "warning-color"
-
-    return "danger-color"
-
-
-@register.filter
-def used_by_partim(learning_component_year, learning_unit_year):
-    if learning_unit_component.search(learning_component_year, learning_unit_year).exists():
-        return _('yes')
-    return _('no')
-
-
+    def test_find_by_mandate_and_type(self):
+        self.assertEqual(self.mandate_structure,
+                         mandate_structure.find_by_mandate_and_type(self.assistant_mandate,
+                                                                    structure_type.FACULTY).first())
