@@ -31,6 +31,7 @@ class LearningUnitComponentClassAdmin(admin.ModelAdmin):
     list_display = ('learning_unit_component', 'learning_class_year')
     fieldsets = ((None, {'fields': ('learning_unit_component', 'learning_class_year')}),)
     raw_id_fields = ('learning_class_year', 'learning_unit_component')
+    search_fields = ['learning_unit_component__id', 'learning_class_year__id']
 
 
 class LearningUnitComponentClass(models.Model):

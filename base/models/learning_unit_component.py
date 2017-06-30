@@ -43,7 +43,7 @@ class LearningUnitComponent(SerializableModel):
     duration = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
-        return u"%s - %s" % (self.type, self.learning_unit_year)
+        return "{} {} {}".format(self.learning_unit_year.acronym, self.learning_component_year.acronym, self.type)
 
     class Meta:
         permissions = (
