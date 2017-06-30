@@ -42,6 +42,7 @@
                     <thead>
                     <th>{% trans 'components'%}</th>
                     <th>{% trans 'code'%}</th>
+                    <th>{% trans 'description'%}</th>
                     <th>{% trans 'nominal_volume' %}</th>
                     <th>{% trans 'nominal_quater' %}</th>
                     <th>{% trans 'volume_partial'%}</th>
@@ -66,6 +67,7 @@
                             {% endif %}
                         </td>
                         <td>/{{ component.learning_component_year.acronym  | default_if_none:'' }}</td>
+                        <td>{{ component.learning_component_year.comment  | default_if_none:'' }}</td>
                         <td>{{ component.volumes.hourly_volume | default_if_none:'0'}}</td>
                         <td>
                             {%if component.volumes.total_volume%}
