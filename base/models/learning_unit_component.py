@@ -51,16 +51,6 @@ class LearningUnitComponent(SerializableModel):
         )
 
 
-def find_by_learning_year_type(a_learning_unit_year=None, a_type=None):
-    if a_learning_unit_year and a_type:
-        try:
-            return LearningUnitComponent.objects.get(learning_unit_year=a_learning_unit_year,
-                                                     type=a_type)
-        except ObjectDoesNotExist:
-            return None
-    return None
-
-
 def find_by_learning_component_year(a_learning_component_year):
     return LearningUnitComponent.objects.filter(learning_component_year=a_learning_component_year).order_by('learning_unit_year__acronym')
 
