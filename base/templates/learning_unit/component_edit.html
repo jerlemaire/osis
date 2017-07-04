@@ -62,6 +62,7 @@
                         <label>{% trans 'nominal_quater' %}</label>
                         <br>
                         <select class="form-control" id="nominal_quater" name="nominal_quater" onChange="nominal_quater_change(this.form)">
+                            <option>?</option>
                             <option>Q1</option>
                             <option>Q2</option>
                             <option>Q1&2</option>
@@ -82,7 +83,7 @@
             </div>
             <div class="modal-footer">
                <input type="hidden" name="entity_component_year_id" value={{entity_component_year.id}} />
-               <button class="btn btn-primary" type="submit">{% trans 'save' %}</button>
+               <button class="btn btn-primary" id="btn-save" type="submit">{% trans 'save' %}</button>
                <button type="submit" class="btn" data-dismiss="modal">{% trans 'cancel' %} </button>
           </div>
         </form>
@@ -92,19 +93,10 @@
 {% block script %}
     <script>
         function toNumber(str) {
-            return parseFloat(str.replace(/,/g , "."))
+            return parseFloat(str.replace("," , "."))
         }
 
-        function setValue(id, newvalue) {
-          var element = document.getElementById(id);
-          element.value = newvalue;
-        }
-
-        function setReadOnly(id, bool){
-          var element = document.getElementById(id);
-          element.readOnly = bool;
-        }
-
+        // on modale load
         $(document).on('shown.bs.modal','#component_edit', function () {
           var nominal_volume = document.getElementById("nominal_volume");
           var nominal_quater = document.getElementById("nominal_quater");
@@ -112,43 +104,176 @@
           var volume_remaining = document.getElementById("volume_remaining");
 
           if (nominal_volume.value == ''){
+            nominal_quater.value = "?"
+            volume_partial.value = ""
+            volume_remaining.value = ""
             nominal_quater.disabled = true
             volume_partial.disabled = true
             volume_remaining.disabled = true
           }
+
+          else if (volume_partial.value == ''){
+            nominal_quater.value = "?";
+            volume_partial.disabled = true;
+            volume_remaining.disabled = true;
+          }
+          else if (toNumber(volume_partial.value) == toNumber(nominal_volume.value)){
+            nominal_quater.value = "Q1";
+            volume_remaining.value = 0;
+            volume_partial.disabled = true;
+            volume_remaining.disabled = true;
+          }
+          else if (toNumber(volume_partial.value) == 0){
+            nominal_quater.value = "Q2";
+            volume_remaining.value = toNumber(nominal_volume.value);
+            volume_partial.disabled = true;
+            volume_remaining.disabled = true;
+          }
+          else if (toNumber(volume_partial.value) == -1){
+            nominal_quater.value = "Q1|2";
+            volume_partial.value = "(" + nominal_volume.value + ")";
+            volume_remaining.value = "(" + nominal_volume.value + ")";
+            volume_partial.disabled = true;
+            volume_remaining.disabled = true;
+          }
+          else {
+            nominal_quater.value = "Q1&2";
+            volume_remaining.value = toNumber(nominal_volume.value) - toNumber(volume_partial.value)
+          }
+
         })
 
         function nominal_volume_change (form) {
+            form.nominal_volume.value = toNumber(form.nominal_volume.value)
+            if (form.nominal_volume.value == '' || isNaN(form.nominal_volume.value)){
+              form.nominal_volume.value = ""
+              form.nominal_quater.value = "?"
+              form.volume_partial.value = ""
+              form.volume_remaining.value = ""
+              form.nominal_quater.disabled = true
+              form.volume_partial.disabled = true
+              form.volume_remaining.disabled = true
+            }
+            else {
+              form.nominal_quater.disabled = false
+              form.volume_partial.disabled = false
+              form.volume_remaining.disabled = false
+            }
+
             if (form.nominal_quater.value == "Q1"){
                 form.volume_partial.value = toNumber(form.nominal_volume.value);
                 form.volume_remaining.value = 0;
+                form.volume_partial.disabled = true;
+                form.volume_remaining.disabled = true;
             }
             else if (form.nominal_quater.value == "Q2"){
                 form.volume_partial.value = 0;
                 form.volume_remaining.value = toNumber(form.nominal_volume.value);
+                form.volume_partial.disabled = true;
+                form.volume_remaining.disabled = true;
             }
             else if (form.nominal_quater.value == "Q1&2"){
                 form.volume_partial.value = toNumber(form.nominal_volume.value) / 2;
                 form.volume_remaining.value = toNumber(form.nominal_volume.value) / 2;
+                form.volume_partial.disabled = false;
+                form.volume_remaining.disabled = false;
             }
             else if (form.nominal_quater.value == "Q1|2"){
                 form.volume_partial.value = "(" + form.nominal_volume.value + ")";
                 form.volume_remaining.value = "(" + form.nominal_volume.value + ")";
-                form.volume_partial.readOnly = true;
-                form.volume_remaining.readOnly = true;
+                form.volume_partial.disabled = true;
+                form.volume_remaining.disabled = true;
+            }
+            else if (form.nominal_quater.value == "?"){
+                form.volume_partial.value = "";
+                form.volume_remaining.value = "";
+                form.volume_partial.disabled = true;
+                form.volume_remaining.disabled = true;
+                document.getElementById("btn-save").disabled = true;
             }
         }
 
         function nominal_quater_change (form) {
-
+            if (form.nominal_quater.value == "Q1"){
+                form.volume_partial.value = toNumber(form.nominal_volume.value);
+                form.volume_remaining.value = 0;
+                form.volume_partial.disabled = true;
+                form.volume_remaining.disabled = true;
+                document.getElementById("btn-save").disabled = false;
+            }
+            else if (form.nominal_quater.value == "Q2"){
+                form.volume_partial.value = 0;
+                form.volume_remaining.value = toNumber(form.nominal_volume.value);
+                form.volume_partial.disabled = true;
+                form.volume_remaining.disabled = true;
+                document.getElementById("btn-save").disabled = false;
+            }
+            else if (form.nominal_quater.value == "Q1&2"){
+                form.volume_partial.value = toNumber(form.nominal_volume.value) / 2;
+                form.volume_remaining.value = toNumber(form.nominal_volume.value) / 2;
+                form.volume_partial.disabled = false;
+                form.volume_remaining.disabled = false;
+                document.getElementById("btn-save").disabled = false;
+            }
+            else if (form.nominal_quater.value == "Q1|2"){
+                form.volume_partial.value = "(" + form.nominal_volume.value + ")";
+                form.volume_remaining.value = "(" + form.nominal_volume.value + ")";
+                form.volume_partial.disabled = true;
+                form.volume_remaining.disabled = true;
+                document.getElementById("btn-save").disabled = false;
+            }
+            else if (form.nominal_quater.value == "?"){
+                form.volume_partial.value = "";
+                form.volume_remaining.value = "";
+                form.volume_partial.disabled = true;
+                form.volume_remaining.disabled = true;
+                document.getElementById("btn-save").disabled = true;
+            }
         }
 
         function volume_partial_change (form) {
+            form.volume_partial.value = toNumber(form.volume_partial.value)
+
+            if (form.volume_partial.value == '' || isNaN(form.volume_partial.value) || form.volume_partial.value <= 0){
+              form.volume_partial.value = 0
+              form.volume_remaining.value = toNumber(form.nominal_volume.value)
+              nominal_quater.value = "Q2";
+              form.volume_partial.disabled = true;
+              form.volume_remaining.disabled = true;
+            }
+            else if (form.volume_partial.value >= toNumber(form.nominal_volume.value)){
+              form.volume_partial.value = toNumber(form.nominal_volume.value)
+              form.volume_remaining.value = 0
+              nominal_quater.value = "Q1";
+              form.volume_partial.disabled = true;
+              form.volume_remaining.disabled = true;
+            }
+            else {
+              form.volume_remaining.value = toNumber(form.nominal_volume.value) - toNumber(form.volume_partial.value)
+            }
 
         }
 
         function volume_remaining_change (form) {
+          form.volume_remaining.value = toNumber(form.volume_remaining.value)
 
+            if (form.volume_remaining.value == '' || isNaN(form.volume_remaining.value) || form.volume_remaining.value <= 0){
+              form.volume_remaining.value = 0
+              form.volume_partial.value = toNumber(form.nominal_volume.value)
+              nominal_quater.value = "Q1";
+              form.volume_partial.disabled = true;
+              form.volume_remaining.disabled = true;
+            }
+            else if (form.volume_remaining.value >= toNumber(form.nominal_volume.value)){
+              form.volume_remaining.value = toNumber(form.nominal_volume.value)
+              form.volume_partial.value = 0
+              nominal_quater.value = "Q2";
+              form.volume_partial.disabled = true;
+              form.volume_remaining.disabled = true;
+            }
+            else {
+              form.volume_partial.value = toNumber(form.nominal_volume.value) - toNumber(form.volume_remaining.value)
+            }
         }
     </script>
 {% endblock %}

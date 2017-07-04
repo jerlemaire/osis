@@ -118,6 +118,10 @@ def learning_unit_components(request, learning_unit_year_id):
     return layout.render(request, "learning_unit/components.html", context)
 
 
+def _to_float(string):
+    return float(string.replace(',', '.'))
+
+
 @login_required
 @permission_required('base.can_edit_learningunit_pedagogy', raise_exception=True)
 @require_http_methods(["GET", "POST"])
@@ -127,6 +131,19 @@ def learning_unit_component_edit(request, learning_unit_year_id):
         entity_component_year.learning_component_year.comment = request.POST.get('comment')
         entity_component_year.learning_component_year.planned_classes = request.POST.get('planned_classes')
         entity_component_year.learning_component_year.save()
+
+        entity_component_year.hourly_volume_total = _to_float(request.POST.get('nominal_volume'))
+
+        if request.POST.get('nominal_quater') == "Q1":
+            entity_component_year.hourly_volume_partial = _to_float(request.POST.get('nominal_volume'))
+        elif request.POST.get('nominal_quater') == "Q2":
+            entity_component_year.hourly_volume_partial = 0
+        elif request.POST.get('nominal_quater') == "Q1&2":
+            entity_component_year.hourly_volume_partial = _to_float(request.POST.get('volume_partial'))
+        elif request.POST.get('nominal_quater') == "Q1|2":
+            entity_component_year.hourly_volume_partial = -1
+
+        entity_component_year.save()
         return HttpResponseRedirect(reverse("learning_unit_components",
                                             kwargs={'learning_unit_year_id': learning_unit_year_id}))
     elif request.method == 'GET':
