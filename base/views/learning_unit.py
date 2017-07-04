@@ -42,8 +42,8 @@ from base.models.enums import learning_container_year_types
 from cms import models as mdl_cms
 from cms.enums import entity_name
 from base.forms.learning_units import LearningUnitYearForm
-from base.forms.learning_unit_specifications import LearningUnitSpecificationsForm, LearningUnitSpecificationsEditForm
 from base.forms.learning_unit_pedagogy import LearningUnitPedagogyForm, LearningUnitPedagogyEditForm
+from base.forms.learning_unit_specifications import LearningUnitSpecificationsForm, LearningUnitSpecificationsEditForm
 from base.models.enums import learning_unit_year_subtypes
 from cms.models import text_label
 
@@ -116,6 +116,22 @@ def learning_unit_components(request, learning_unit_year_id):
     context['tab_active'] = 'components'
     context['experimental_phase'] = True
     return layout.render(request, "learning_unit/components.html", context)
+
+
+@login_required
+@permission_required('base.can_edit_learningunit_pedagogy', raise_exception=True)
+@require_http_methods(["GET", "POST"])
+def learning_unit_component_edit(request, learning_unit_year_id):
+    if request.method == 'POST':
+        entity_component_year = mdl.entity_component_year.get_by_id(request.POST.get('entity_component_year_id'))
+        entity_component_year.learning_component_year.comment = request.POST.get('comment')
+        entity_component_year.learning_component_year.planned_classes = request.POST.get('planned_classes')
+        entity_component_year.learning_component_year.save()
+        return HttpResponseRedirect(reverse("learning_unit_components",
+                                            kwargs={'learning_unit_year_id': learning_unit_year_id}))
+    elif request.method == 'GET':
+        entity_component_year = mdl.entity_component_year.get_by_id(request.GET.get('entity_component_year_id'))
+        return layout.render(request, "learning_unit/component_edit.html", locals())
 
 
 @login_required

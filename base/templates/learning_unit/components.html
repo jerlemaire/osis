@@ -87,7 +87,9 @@
                             <td>{{ component.learning_component_year |used_by_partim:learning_unit_year }}</td>
                         {% endif %}
                         <td>
-                            <a href="#">
+                            <a class="component-edit-btn pull-right" href="#"
+                               data-form="{% url 'learning_unit_component_edit' learning_unit_year_id=learning_unit_year.id %}?entity_component_year_id={{component.entity_component_yr.id}}"
+                               title="Edit">
                                 <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                             </a>
                         </td>
@@ -132,4 +134,19 @@
 
     </div>
 </div>
+
+<div class="modal fade" id="component_edit" role="dialog" data-backdrop="static"></div>
+{% endblock %}
+{% block script %}
+    <script>
+        $(".component-edit-btn").click(function(ev) {
+            ev.preventDefault();
+            var url = $(this).data("form"); // get the contact form url
+            var component_edit_modal = $("#component_edit");
+            component_edit_modal.load(url, function() { // load the url into the modal
+                $(this).modal('show');
+            });
+            return false;
+        });
+    </script>
 {% endblock %}

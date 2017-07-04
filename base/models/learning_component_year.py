@@ -73,6 +73,7 @@ class LearningComponentYear(models.Model):
     def real_classes(self):
         return len(learning_class_year.find_by_learning_component_year(self))
 
+
 def find_by_id(learning_component_year_id):
     return LearningComponentYear.objects.get(pk=learning_component_year_id)
 

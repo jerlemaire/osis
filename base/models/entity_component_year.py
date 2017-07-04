@@ -23,8 +23,9 @@
 #    see http://www.gnu.org/licenses/.
 #
 ##############################################################################
-from django.db import models
 from django.contrib import admin
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
 
 
 class EntityComponentYearAdmin(admin.ModelAdmin):
@@ -53,3 +54,10 @@ def find_by_learning_container_year(learning_container_yr):
 def find_by_entity_container_years(entity_container_yrs, a_learning_component_year):
     return EntityComponentYear.objects.filter(entity_container_year__in=entity_container_yrs,
                                               learning_component_year=a_learning_component_year)
+
+
+def get_by_id(entity_component_year_id):
+    try:
+        return EntityComponentYear.objects.get(pk=entity_component_year_id)
+    except ObjectDoesNotExist:
+        return None
