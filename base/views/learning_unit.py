@@ -119,7 +119,10 @@ def learning_unit_components(request, learning_unit_year_id):
 
 
 def _to_float(string):
-    return float(string.replace(',', '.'))
+    if not string:
+        return None
+    else:
+        return float(string.replace(',', '.'))
 
 
 @login_required
@@ -142,6 +145,8 @@ def learning_unit_component_edit(request, learning_unit_year_id):
             entity_component_year.hourly_volume_partial = _to_float(request.POST.get('volume_partial'))
         elif request.POST.get('nominal_quater') == "Q1|2":
             entity_component_year.hourly_volume_partial = -1
+        elif request.POST.get('nominal_quater') == "?":
+            entity_component_year.hourly_volume_partial = None
 
         entity_component_year.save()
         return HttpResponseRedirect(reverse("learning_unit_components",

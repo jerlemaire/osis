@@ -1483,11 +1483,17 @@ msgstr "Vol. q2"
 msgid "nominal_volume"
 msgstr "Nominal volume"
 
+msgid "nominal_volume_error"
+msgstr "Between 1 and 2000, or empty"
+
 msgid "schedules_conformity"
 msgstr "Sched. conform. "
 
 msgid "planned_classrooms"
 msgstr "Planned classrooms"
+
+msgid "planned_classrooms_error"
+msgstr "Between 0 and 999"
 
 msgid "classes"
 msgstr "Classes"

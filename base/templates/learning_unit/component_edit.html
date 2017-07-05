@@ -47,17 +47,13 @@
                     </div>
                     <div class="col-md-3">
                         <label>{% trans 'planned_classrooms' %}</label>
-                        <input class="form-control" id="planned_classes" name="planned_classes" type="number"
-                               value="{{entity_component_year.learning_component_year.planned_classes | default_if_none:'0'}}"/>
+                        <input class="form-control" id="planned_classes" name="planned_classes" onChange="planned_classes_change(this.form)"
+                               type="number" value="{{entity_component_year.learning_component_year.planned_classes | default_if_none:'0'}}"/>
+                        <div class="error" style="display: none;" id="planned_classes_error">{% trans 'planned_classrooms_error' %}</div>
                     </div>
                 </div>
                 <br>
                 <div class="row">
-                    <div class="col-md-3">
-                        <label>{% trans 'nominal_volume' %}</label>
-                        <input class="form-control" id="nominal_volume" name="nominal_volume" onChange="nominal_volume_change(this.form)" type="text"
-                               value="{{entity_component_year.hourly_volume_total | default_if_none:''}}"/>
-                    </div>
                     <div class="col-md-3">
                         <label>{% trans 'nominal_quater' %}</label>
                         <br>
@@ -70,14 +66,22 @@
                         </select>
                     </div>
                     <div class="col-md-3">
+                        <label>{% trans 'nominal_volume' %}</label>
+                        <input class="form-control" id="nominal_volume" name="nominal_volume" type="text" onChange="nominal_volume_change(this.form)"
+                               onKeyPress="nominal_volume_display(this.form)" value="{{entity_component_year.hourly_volume_total | default_if_none:''}}"/>
+                        <div class="error" style="display: none;" id="nominal_volume_error">{% trans 'nominal_volume_error' %}</div>
+                    </div>
+                    <div class="col-md-3">
                         <label>{% trans 'volume_partial'%}</label>
                         <input class="form-control" id="volume_partial" name="volume_partial" onChange="volume_partial_change(this.form)" type="text"
                                value="{{entity_component_year.hourly_volume_partial | default_if_none:''}}"/>
+                        <div class="error" style="display: none;" id="volume_partial_error">{% trans 'volume_partial_error' %}</div>
                     </div>
                     <div class="col-md-3">
                         <label>{% trans 'volume_remaining'%}</label>
                         <input class="form-control" id="volume_remaining" name="volume_remaining" onChange="volume_remaining_change(this.form)" type="text"
                                value=""/>
+                        <div class="error" style="display: none;" id="volume_remaining_error">{% trans 'volume_remaining_error' %}</div>
                     </div>
                 </div>
             </div>
@@ -138,15 +142,25 @@
           }
           else {
             nominal_quater.value = "Q1&2";
-            volume_remaining.value = toNumber(nominal_volume.value) - toNumber(volume_partial.value)
+            volume_remaining.value = toNumber(nominal_volume.value) - toNumber(volume_partial.value);
           }
 
         })
 
         function nominal_volume_change (form) {
-            form.nominal_volume.value = toNumber(form.nominal_volume.value)
-            if (form.nominal_volume.value == '' || isNaN(form.nominal_volume.value)){
-              form.nominal_volume.value = ""
+            if (form.nominal_volume.value == '' || form.nominal_volume.value == null){
+              document.getElementById("btn-save").disabled = false;
+              document.getElementById("nominal_volume_error").style.display = 'none';
+              form.nominal_quater.value = "?"
+              form.volume_partial.value = ""
+              form.volume_remaining.value = ""
+              form.nominal_quater.disabled = true
+              form.volume_partial.disabled = true
+              form.volume_remaining.disabled = true
+            }
+            else if (isNaN(form.nominal_volume.value) || toNumber(form.nominal_volume.value) <= 0 || toNumber(form.nominal_volume.value) > 2000){
+              document.getElementById("btn-save").disabled = true;
+              document.getElementById("nominal_volume_error").style.display = 'block';
               form.nominal_quater.value = "?"
               form.volume_partial.value = ""
               form.volume_remaining.value = ""
@@ -155,6 +169,9 @@
               form.volume_remaining.disabled = true
             }
             else {
+              form.nominal_volume.value = toNumber(form.nominal_volume.value)
+              document.getElementById("btn-save").disabled = false;
+              document.getElementById("nominal_volume_error").style.display = 'none';
               form.nominal_quater.disabled = false
               form.volume_partial.disabled = false
               form.volume_remaining.disabled = false
@@ -189,7 +206,6 @@
                 form.volume_remaining.value = "";
                 form.volume_partial.disabled = true;
                 form.volume_remaining.disabled = true;
-                document.getElementById("btn-save").disabled = true;
             }
         }
 
@@ -227,26 +243,19 @@
                 form.volume_remaining.value = "";
                 form.volume_partial.disabled = true;
                 form.volume_remaining.disabled = true;
-                document.getElementById("btn-save").disabled = true;
             }
         }
 
         function volume_partial_change (form) {
-            form.volume_partial.value = toNumber(form.volume_partial.value)
-
-            if (form.volume_partial.value == '' || isNaN(form.volume_partial.value) || form.volume_partial.value <= 0){
+            if (form.volume_partial.value == '' || isNaN(form.volume_partial.value) || toNumber(form.volume_partial.value) <= 0){
               form.volume_partial.value = 0
               form.volume_remaining.value = toNumber(form.nominal_volume.value)
               nominal_quater.value = "Q2";
               form.volume_partial.disabled = true;
               form.volume_remaining.disabled = true;
             }
-            else if (form.volume_partial.value >= toNumber(form.nominal_volume.value)){
-              form.volume_partial.value = toNumber(form.nominal_volume.value)
-              form.volume_remaining.value = 0
-              nominal_quater.value = "Q1";
-              form.volume_partial.disabled = true;
-              form.volume_remaining.disabled = true;
+            else if (toNumber(form.volume_partial.value) >= toNumber(form.nominal_volume.value)){
+              form.nominal_volume.value = toNumber(form.volume_partial.value) + toNumber(form.volume_remaining.value)
             }
             else {
               form.volume_remaining.value = toNumber(form.nominal_volume.value) - toNumber(form.volume_partial.value)
@@ -265,15 +274,26 @@
               form.volume_remaining.disabled = true;
             }
             else if (form.volume_remaining.value >= toNumber(form.nominal_volume.value)){
-              form.volume_remaining.value = toNumber(form.nominal_volume.value)
-              form.volume_partial.value = 0
-              nominal_quater.value = "Q2";
-              form.volume_partial.disabled = true;
-              form.volume_remaining.disabled = true;
+              form.nominal_volume.value = toNumber(form.volume_partial.value) + toNumber(form.volume_remaining.value)
             }
             else {
               form.volume_partial.value = toNumber(form.nominal_volume.value) - toNumber(form.volume_remaining.value)
             }
+        }
+
+        function planned_classes_change (form) {
+          if (toNumber(form.planned_classes.value) < 0 || toNumber(form.planned_classes.value) > 999){
+            document.getElementById("btn-save").disabled = true;
+            document.getElementById("planned_classes_error").style.display = 'block';
+          }
+          else {
+            document.getElementById("btn-save").disabled = false;
+            document.getElementById("planned_classes_error").style.display = 'none';
+          }
+        }
+
+        function nominal_volume_display (form) {
+
         }
     </script>
 {% endblock %}
