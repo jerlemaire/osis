@@ -35,6 +35,7 @@ class LearningContainerYearAdmin(admin.ModelAdmin):
                                     'title_english', 'language')}),)
     raw_id_fields = ('learning_container',)
     search_fields = ['acronym']
+    list_filter = ('academic_year',)
 
 
 class LearningContainerYear(models.Model):

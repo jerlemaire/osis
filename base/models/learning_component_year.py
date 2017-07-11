@@ -34,8 +34,9 @@ class LearningComponentYearAdmin(admin.ModelAdmin):
     list_display = ('learning_container_year', 'title', 'acronym', 'type', 'comment')
     fieldsets = ((None, {'fields': ('learning_container_year', 'title', 'acronym',
                                     'type', 'comment', 'planned_classes')}),)
-    search_fields = ['acronym', 'learning_container_year__id']
+    search_fields = ['acronym', 'learning_container_year__acronym']
     raw_id_fields = ('learning_container_year',)
+    list_filter = ('learning_container_year__academic_year',)
 
 
 class LearningComponentYear(models.Model):
@@ -78,7 +79,13 @@ def find_by_id(learning_component_year_id):
     return LearningComponentYear.objects.get(pk=learning_component_year_id)
 
 
-def find_by_learning_container_year(a_learning_container_year):
-    return LearningComponentYear.objects.filter(learning_container_year=a_learning_container_year)\
+def find_by_learning_container_year(learning_container_year, with_classes=False):
+    queryset = LearningComponentYear.objects.filter(learning_container_year=learning_container_year)\
                                         .order_by('type', 'acronym')
+    if with_classes:
+        queryset = queryset.prefetch_related(
+             models.Prefetch('learningclassyear_set',
+             to_attr="classes")
+        )
 
+    return queryset
